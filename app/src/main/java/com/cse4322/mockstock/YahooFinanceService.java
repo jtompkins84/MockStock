@@ -5,8 +5,12 @@
  */
 package com.cse4322.mockstock;
 
+import android.annotation.TargetApi;
 import android.net.wifi.WifiConfiguration;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.security.NetworkSecurityPolicy;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.apache.commons.net.ftp.FTPClient;
@@ -25,6 +29,10 @@ import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
 import java.util.StringTokenizer;
 
 import yahoofinance.*;
@@ -33,7 +41,7 @@ public class YahooFinanceService {
     /**
      * maximum number of stocks to be loaded into ram at once.
      */
-    private static int maxStocks = 80;
+    private static int maxStocks = 500;
     /**
      * maximum number of stocks on a page.
      */
@@ -44,11 +52,12 @@ public class YahooFinanceService {
     public static final String nasdaqFile = "nasdaqlisted.txt";
 
 
-    private static Stock[] stocks = new Stock[maxStocks];
+    private static String[] tickers = new String[maxStocks];
+    private static Map<String, Stock> stocksByTicker;
+    private static AsyncTask<String, Void, Void> task;
 
+    @TargetApi(Build.VERSION_CODES.M)
     public static void updateStocks() {
-        final String[] tickers = new String[maxOnPage];
-
         /*
         TODO Citation
         Code retrieved from:
@@ -57,29 +66,28 @@ public class YahooFinanceService {
 
         Retrieving tickers from NASDAQ FTP
         */
-        new AsyncTask<String, Void, Void>() {
-            String str;
+        task = new AsyncTask<String, Void, Void>() {
 
             @Override
             protected Void doInBackground(String... params) {
                 StringTokenizer strtok;
+                String str;
                 int pageStart = maxOnPage * (curPage - 1);
 
                 try {
-                    // Create a URL for the desired page
+                    // Make FTP connection
                     FTPClient ftpClient = new FTPClient();
                     ftpClient.connect(nasdaqURL, 21);
                     ftpClient.login("anonymous", "password");
+                    ftpClient.enterLocalPassiveMode();
                     ftpClient.changeWorkingDirectory(nasdaqDir);
-
+                    // Get input stream
                     InputStream inStream = ftpClient.retrieveFileStream(nasdaqFile);
                     InputStreamReader reader = new InputStreamReader(inStream, "UTF-8");
-
+                    // Get buffered reader of input stream
                     BufferedReader in = new BufferedReader(reader);
 
-//                    BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
                     in.readLine(); // skip first line. First line on NASDAQ txt file is not stock data.
-
 
                     // loop skips ahead in file to scope of the "current page".
                     for (int i = 0; i < pageStart; i++) {
@@ -88,7 +96,17 @@ public class YahooFinanceService {
                             return null; // RETURN empty handed if the end of the file is reached.
                     }
 
-                    for (int i = 0; i < maxOnPage; i++) {
+                    int i; // iterative variable set starting index; either first or second half of 'stocks' array.
+                    int end; // ending index
+                    if ((curPage - 1) % 2 == 0) {
+                        i = 0;
+                        end = maxOnPage;
+                    } else {
+                        i = maxOnPage;
+                        end = maxStocks;
+                    }
+
+                    for (; i < end; i++) {
                         str = in.readLine();
                         strtok = new StringTokenizer(str, "|", false);
 
@@ -96,6 +114,7 @@ public class YahooFinanceService {
                         Log.d("YahooFinanceService", " Found ticker \"" + tickers[i] + "\"");
                     }
 
+                    ftpClient.disconnect();
                     in.close();
                 } catch (MalformedURLException e) {
                     Log.e("YahooFinanceService", e.getLocalizedMessage());
@@ -103,30 +122,41 @@ public class YahooFinanceService {
                     Log.e("YahooFinanceService", e.getLocalizedMessage());
                 }
 
-                int j; // iterative variable set starting index; either first or second half of 'stocks' array.
-                int end; // ending index
-                if (curPage % 2 != 0) {
-                    j = 0;
-                    end = maxOnPage;
-                } else {
-                    j = maxOnPage - 1;
-                    end = maxStocks;
-                }
                 try {
-                    for (int i = 0; j < end && i < tickers.length; i++, j++) {
+                    stocksByTicker = YahooFinance.get(tickers);
 
-                        stocks[j] = YahooFinance.get(tickers[i]);
-                        if (stocks[j].getName() != null) {
-                            Log.d("YahooFinanceService", stocks[j].toString() + " : " + stocks[j].getName());
-                        }
+                    for(String s : tickers) {
+                        if(s != null) Log.d("YahooFinanceService", stocksByTicker.get(s).toString());
                     }
-
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
 
+
                 return null;
             }
-        }.execute(nasdaqURL);
+        }.execute();
+    }
+
+    public static void getNextPage() {
+        if(task.getStatus() == AsyncTask.Status.FINISHED) {
+            curPage++;
+            updateStocks();
+            return;
+        }
+        // If task is not FINISHED, create second thread to wait for completion before executing.
+        else {
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    while (task.getStatus() != AsyncTask.Status.FINISHED) ;
+                    curPage++;
+                    updateStocks();
+                    return null;
+                }
+            }.execute();
+        }
     }
 }
