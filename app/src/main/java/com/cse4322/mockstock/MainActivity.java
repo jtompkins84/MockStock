@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
         YahooFinanceService.updateStocks();
         YahooFinanceService.getNextPage();
+        YahooFinanceService.getNextPage();
     }
 
     @Override

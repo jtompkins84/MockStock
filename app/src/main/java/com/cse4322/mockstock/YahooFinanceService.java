@@ -41,7 +41,7 @@ public class YahooFinanceService {
     /**
      * maximum number of stocks to be loaded into ram at once.
      */
-    private static int maxStocks = 500;
+    private static int maxStocks = 10;
     /**
      * maximum number of stocks on a page.
      */
@@ -54,7 +54,7 @@ public class YahooFinanceService {
 
     private static String[] tickers = new String[maxStocks];
     private static Map<String, Stock> stocksByTicker;
-    private static AsyncTask<String, Void, Void> task;
+    private static AsyncTask task;
 
     @TargetApi(Build.VERSION_CODES.M)
     public static void updateStocks() {
@@ -144,7 +144,6 @@ public class YahooFinanceService {
         if(task.getStatus() == AsyncTask.Status.FINISHED) {
             curPage++;
             updateStocks();
-            return;
         }
         // If task is not FINISHED, create second thread to wait for completion before executing.
         else {
