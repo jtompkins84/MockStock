@@ -29,4 +29,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile files('libs/YahooFinanceAPI-3.5.0.jar')
     compile files('libs/commons-net-3.5.jar')
+    compile 'com.github.satyan:sugar:1.4'
 }
