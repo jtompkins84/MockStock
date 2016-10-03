@@ -5,12 +5,8 @@
  */
 package com.cse4322.mockstock;
 
-import android.annotation.TargetApi;
-import android.net.wifi.WifiConfiguration;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.security.NetworkSecurityPolicy;
-import android.support.annotation.NonNull;
+import android.support.v4.util.Pair;
 import android.util.Log;
 
 import org.apache.commons.net.ftp.FTPClient;
@@ -20,52 +16,50 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
 import yahoofinance.*;
+import yahoofinance.quotes.stock.StockQuote;
+import yahoofinance.quotes.stock.StockQuotesData;
 
 public class YahooFinanceService {
-    /**
-     * maximum number of stocks to be loaded into ram at once.
-     */
-    private static int maxStocks = 10;
-    /**
-     * maximum number of stocks on a page.
-     */
-    private static int maxOnPage = maxStocks / 2;
-    private static int curPage = 1;
-    public static final String nasdaqURL = "ftp.nasdaqtrader.com";
+    public static final String nasdaqFTP = "ftp.nasdaqtrader.com";
     public static final String nasdaqDir = "/SymbolDirectory";
     public static final String nasdaqFile = "nasdaqlisted.txt";
 
-
-    private static String[] tickers = new String[maxStocks];
-    private static Map<String, Stock> stocksByTicker;
-    private static AsyncTask task;
-
-    @TargetApi(Build.VERSION_CODES.M)
+    /**
+     * symbols stores the ticker symbols & company name as Pair<String, String>
+     * for the particular market of interest. Since the stocks are pulled in alphabetically, this could
+     * be used to implement search by name.
+     */
+    public static ArrayList<StockPair> stocks = new ArrayList<>(5000);
+    private static Map<String, Stock> stocksByTicker; // TODO implement map for searching stocks.
+    private static Map<String, Stock> stocksByName = new HashMap<>(); // TODO implement map for searching stocks.
+    private static AsyncTask updateTask;
+    /**
+     *
+     */
     public static void updateStocks() {
         /*
         TODO Citation
         Code retrieved from:
         http://stackoverflow.com/questions/7053513/howto-do-a-simple-ftp-get-file-on-android
         [Access Date]Sept 30, 2016
-
-        Retrieving tickers from NASDAQ FTP
+        Retrieving tickers from NASDAQ FTP.
         */
-        task = new AsyncTask<String, Void, Void>() {
+        updateTask = new AsyncTask<String, Void, Void>() {
 
             @Override
             protected Void doInBackground(String... params) {
                 StringTokenizer strtok;
                 String str;
-                int pageStart = maxOnPage * (curPage - 1);
-
                 try {
-                    // Make FTP connection
+                    // Make FTP connection. Using org.apache.commons.net imported library.
                     FTPClient ftpClient = new FTPClient();
-                    ftpClient.connect(nasdaqURL, 21);
+                    ftpClient.connect(nasdaqFTP, 21);
                     ftpClient.login("anonymous", "password");
                     ftpClient.enterLocalPassiveMode();
                     ftpClient.changeWorkingDirectory(nasdaqDir);
@@ -77,29 +71,13 @@ public class YahooFinanceService {
 
                     in.readLine(); // skip first line. First line on NASDAQ txt file is not stock data.
 
-                    // loop skips ahead in file to scope of the "current page".
-                    for (int i = 0; i < pageStart; i++) {
-                        str = in.readLine();
-                        if (str == null)
-                            return null; // RETURN empty handed if the end of the file is reached.
-                    }
-
-                    int i; // iterative variable set starting index; either first or second half of 'stocks' array.
-                    int end; // ending index
-                    if ((curPage - 1) % 2 == 0) {
-                        i = 0;
-                        end = maxOnPage;
-                    } else {
-                        i = maxOnPage;
-                        end = maxStocks;
-                    }
-
-                    for (; i < end; i++) {
-                        str = in.readLine();
-                        strtok = new StringTokenizer(str, "|", false);
-
-                        tickers[i] = strtok.nextToken();
-                        Log.d("YahooFinanceService", " Found ticker \"" + tickers[i] + "\"");
+                    // reads the entire file of stocks and stores the
+                    while((str = in.readLine()) != null) {
+                        strtok = new StringTokenizer(str, "|");
+                        // Gets the symbol and company name from the file.
+                        // NOTE: this is only really working based on the file from the NASDAQ ftp.
+                        //          May not work the same once other stock exchanges are implemented.
+                        stocks.add(new StockPair(strtok.nextToken(), strtok.nextToken()));
                     }
 
                     ftpClient.disconnect();
@@ -110,40 +88,8 @@ public class YahooFinanceService {
                     Log.e("YahooFinanceService", e.getLocalizedMessage());
                 }
 
-                try {
-                    stocksByTicker = YahooFinance.get(tickers);
-
-                    for(String s : tickers) {
-                        if(s != null) Log.d("YahooFinanceService", stocksByTicker.get(s).toString());
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-
-
                 return null;
             }
         }.execute();
-    }
-
-    public static void getNextPage() {
-        if(task.getStatus() == AsyncTask.Status.FINISHED) {
-            curPage++;
-            updateStocks();
-        }
-        // If task is not FINISHED, create second thread to wait for completion before executing.
-        else {
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-                    while (task.getStatus() != AsyncTask.Status.FINISHED) ;
-                    curPage++;
-                    updateStocks();
-                    return null;
-                }
-            }.execute();
-        }
     }
 }
