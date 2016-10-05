@@ -72,12 +72,15 @@ public class YahooFinanceService {
                     in.readLine(); // skip first line. First line on NASDAQ txt file is not stock data.
 
                     // reads the entire file of stocks and stores the
+                    int i = 0;
                     while((str = in.readLine()) != null) {
                         strtok = new StringTokenizer(str, "|");
                         // Gets the symbol and company name from the file.
                         // NOTE: this is only really working based on the file from the NASDAQ ftp.
                         //          May not work the same once other stock exchanges are implemented.
-                        stocks.add(new StockPair(strtok.nextToken(), strtok.nextToken()));
+                        stocks.add( new StockPair(strtok.nextToken(), strtok.nextToken()) );
+                        Log.d(this.getClass().getSimpleName(), stocks.get(i).getTickerSymbol() + " :: " + stocks.get(i).getCompanyName());
+                        i++;
                     }
 
                     ftpClient.disconnect();
