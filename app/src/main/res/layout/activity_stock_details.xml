@@ -22,32 +22,33 @@
             android:layout_height="40dp"
             android:layout_width="match_parent"
             android:backgroundTint="@color/colorAccent">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-            <TextView
-                android:text="Portfolio"
-                android:textSize="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/portfolio"
-                android:layout_weight="0.36"
-                android:textColor="@color/colorPrimary"
-                android:paddingLeft="30dp"
-                android:gravity="center_vertical"/>
 
-        <TextView
-            android:text="$20,000.00"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/accountbalance"
-            android:layout_weight="0.36"
-            android:textColor="@color/colorPrimary"
-            android:textSize="20dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:paddingRight="15dp"/>
-    </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                    <TextView
+                        android:text="Portfolio"
+                        android:textSize="20dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:id="@+id/portfolio"
+                        android:layout_weight="0.36"
+                        android:textColor="@color/colorPrimary"
+                        android:paddingLeft="30dp"
+                        android:gravity="center_vertical"/>
+
+                <TextView
+                    android:text="$20,000.00"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/accountbalance"
+                    android:layout_weight="0.36"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:paddingRight="15dp"/>
+            </RelativeLayout>
         </android.support.design.widget.AppBarLayout>
 
         <android.support.design.widget.AppBarLayout
@@ -173,6 +174,25 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:text="High Price"
+                            android:layout_gravity="center_vertical"
+                            android:id="@+id/highprice"
+                            android:background="@color/lightgrey"
+                            android:padding="@dimen/attributepadding"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentStart="true" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/highpriceamt"
+                            android:padding="@dimen/attributepadding"
+                            android:text="116.21"
+                            android:layout_alignParentRight="true"/>
+
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:text="Open Price"
                             android:id="@+id/openprice"
                             android:layout_below="@id/highprice"
@@ -187,6 +207,23 @@
                             android:layout_alignParentRight="true"
                             android:layout_alignTop="@id/openprice"/>
 
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Ask Price"
+                            android:id="@+id/askprice"
+                            android:background="@color/lightgrey"
+                            android:padding="@dimen/attributepadding"
+                            android:layout_below="@+id/openprice"
+                            android:layout_alignParentStart="true" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/askpriceamt"
+                            android:padding="@dimen/attributepadding"
+                            android:text="113.21"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignTop="@id/askprice"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -241,41 +278,9 @@
                             android:layout_alignTop="@id/weeklow"/>
 
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Ask Price"
-                            android:id="@+id/askprice"
-                            android:background="@color/lightgrey"
-                            android:padding="@dimen/attributepadding"
-                            android:layout_below="@+id/openprice"
-                            android:layout_alignParentStart="true" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/askpriceamt"
-                            android:padding="@dimen/attributepadding"
-                            android:text="113.21"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignTop="@id/askprice"/>
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="High Price"
-                            android:layout_gravity="center_vertical"
-                            android:id="@+id/highprice"
-                            android:background="@color/lightgrey"
-                            android:padding="@dimen/attributepadding"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignParentStart="true" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/highpriceamt"
-                            android:padding="@dimen/attributepadding"
-                            android:text="116.21"
-                            android:layout_alignParentRight="true"/>
+
+
 
                     </RelativeLayout>
                 </LinearLayout>

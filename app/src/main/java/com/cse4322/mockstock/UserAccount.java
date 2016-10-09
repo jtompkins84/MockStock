@@ -11,4 +11,19 @@ import java.util.ArrayList;
 public class UserAccount extends SugarRecord {
     private float balance; // TODO add accessor methods --> [get:set]
     private ArrayList<StockPair> purchased; // TODO add accessor methods --> [add:get]
+
+    public UserAccount(){
+    }
+
+    public UserAccount(float balance){
+        this.balance = balance;
+    }
+
+    public float getBalance() {
+        return balance;
+    }
+
+    public void setBalance(float balance) {
+        this.balance = balance;
+    }
 }

@@ -8,4 +8,6 @@
 
 
     <dimen name="attributepadding">4dp</dimen>
+    <dimen name="card_vertical_margin">8dp</dimen>
+    <dimen name="portfolio_font">19dp</dimen>
 </resources>
