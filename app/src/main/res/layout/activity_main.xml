@@ -21,10 +21,55 @@
             android:titleTextColor="@color/colorAccent"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="@string/app_name"
-            app:titleTextColor="@color/colorAccent" />
+            app:titleTextColor="@color/colorAccent">
+
+        </android.support.v7.widget.Toolbar>
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_height="40dp"
+            android:layout_width="match_parent"
+            android:backgroundTint="@color/colorAccent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:text="Portfolio"
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/portfolio"
+                    android:layout_weight="0.36"
+                    android:textColor="@color/colorPrimary"
+                    android:paddingLeft="30dp"
+                    android:gravity="center_vertical"/>
+
+                <TextView
+                    android:text="$20,000.00"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/accountbalance"
+                    android:layout_weight="0.36"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:paddingRight="15dp"/>
+            </RelativeLayout>
+        </android.support.design.widget.AppBarLayout>
 
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_main"/>
+
+    <Button
+        android:text="Launch list view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button"
+        app:layout_anchorGravity="center_vertical|center_horizontal"
+        android:layout_gravity="center_horizontal" />
+
 
 </android.support.design.widget.CoordinatorLayout>

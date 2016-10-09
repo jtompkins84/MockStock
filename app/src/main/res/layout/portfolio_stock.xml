@@ -10,7 +10,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <!-- User avatar -->
@@ -18,7 +18,7 @@
             android:padding="@dimen/activity_horizontal_margin"
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="92dp">
+            android:layout_height="wrap_content">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -47,6 +47,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="NASDAQ"
+                    android:id="@+id/markettype"
                     android:layout_below="@+id/nameofcompany" />
 
 
@@ -85,19 +86,20 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="$42.03"
-                    android:id="@+id/price"
+                    android:id="@+id/gain"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="5dp"
                     android:textSize="@dimen/portfolio_font"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:layout_below="@id/price"
-                    android:layout_centerHorizontal="true"
                     android:text="0.07%"
                     android:id="@+id/percent"
-                    android:textSize="@dimen/portfolio_font"/>
+                    android:textSize="@dimen/portfolio_font"
+                    android:layout_below="@+id/gain"
+                    android:layout_centerHorizontal="true" />
 
             </RelativeLayout>
 
@@ -146,15 +148,16 @@
                     android:layout_marginTop="5dp"
                     android:textSize="@dimen/portfolio_font"
                     android:textColor="@color/colorPrimary"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:layout_below="@id/valueamt"
-                    android:layout_centerHorizontal="true"
                     android:text="103.12"
                     android:textSize="@dimen/portfolio_font"
-                    android:id="@+id/pricestock"/>
+                    android:id="@+id/pricestock"
+                    android:layout_below="@+id/valueamt"
+                    android:layout_centerHorizontal="true" />
             </RelativeLayout>
 
         </LinearLayout>
