@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,10 +13,12 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+import yahoofinance.*;
+import yahoofinance.Stock;
 
-
+public class MainActivity extends AppCompatActivity implements StockUpdateAsyncResponse{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,10 +28,8 @@ public class MainActivity extends AppCompatActivity {
 
         Button stocklistlaunch = (Button) findViewById(R.id.button);
 
-        YahooFinanceService.getNASDAQList();
-
-
-
+        String[] testStocks = {"ABAX", "ACST", "BNFT", "CDW"};
+        new StockUpdateAsyncTask(this).execute(testStocks);
 
         stocklistlaunch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,5 +60,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void processFinished(ArrayList<Stock> output) {
+        for(Stock stock : output) {
+            Log.v("StockUpdate Complete", stock.toString());
+        }
     }
 }
