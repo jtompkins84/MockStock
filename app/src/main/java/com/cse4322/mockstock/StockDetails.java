@@ -9,7 +9,7 @@ public class StockDetails extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_stock_details);
+        setContentView(R.layout.activity_stock_content);
 
         String companyname = getIntent().getExtras().getString("name");
         String ticker = getIntent().getExtras().getString("ticker");
