@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
 
     tools:context="com.cse4322.mockstock.Portfolio">
+
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -13,8 +14,7 @@
         android:choiceMode="singleChoice"
         android:divider="@android:color/transparent"
         android:dividerHeight="-5.0dp"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentStart="true"
-        ></ListView>
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"></ListView>
 
 </RelativeLayout>
