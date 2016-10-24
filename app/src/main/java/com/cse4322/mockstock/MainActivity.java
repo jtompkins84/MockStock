@@ -31,8 +31,8 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.mockstock_toolbar);
+//        setSupportActionBar(toolbar);
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.statusbar));
 
@@ -73,11 +73,6 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
 
             }
         });
-
-
-
-
-
     }
 
     @Override
