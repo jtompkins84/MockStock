@@ -11,7 +11,7 @@ import yahoofinance.*;
 import yahoofinance.Stock;
 
 /**
- * AsyncTask that gets updated information using YahooFinance API.
+ * AsyncTask that gets updated stock data using YahooFinance API.
  *
  * TODO Citation
  * http://stackoverflow.com/questions/12575068/how-to-get-the-result-of-onpostexecute-to-main-activity-because-asynctask-is-a
@@ -43,6 +43,6 @@ public class StockUpdateAsyncTask extends AsyncTask<String[], Void, ArrayList<St
 
     @Override
     protected void onPostExecute(ArrayList<Stock> result) {
-        mDelegate.processFinished(result);
+        mDelegate.stockUpdateProcessFinished(result);
     }
 }

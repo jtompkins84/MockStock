@@ -14,6 +14,10 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.orm.SugarContext;
+import com.orm.SugarDb;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -21,12 +25,12 @@ import java.util.Map;
 import yahoofinance.*;
 import yahoofinance.Stock;
 
-public class MainActivity extends AppCompatActivity implements StockUpdateAsyncResponse{
+public class MainActivity extends AppCompatActivity implements StockUpdateAsyncResponse, UserStockUpdateAsyncResponse{
+    private ArrayList<UserStock> stocklist;
+    private StockListAdapter stockListAdapter;
+    private ListView stockListView;
+    private boolean doListInitial = true;
 
-
-    private ArrayList<com.cse4322.mockstock.Stock> stocklist;
-    private ListAdapter stockListAdapter;
-    ListView stockListView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,41 +40,24 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.statusbar));
 
-        String[] testStocks = {"ABAX", "ACST", "BNFT", "CDW"};
+        String[] testStocks = {"GRVY", "EBIO", "OSTK"};
+        testStocks = new String[]{"TSLA", "CRIS", "MOMO"};
         new StockUpdateAsyncTask(this).execute(testStocks);
 
+//        UserAccount.getCurrUserAccount().resetAccount();
 
-        com.cse4322.mockstock.Stock stock1 = new com.cse4322.mockstock.Stock("AAL", "American Air", "nasdaq", "$3.0", "34.0%", "$3300", "$43.00");
-        com.cse4322.mockstock.Stock stock2 = new com.cse4322.mockstock.Stock("FB", "Facebook", "nasdaq", "$69.50", "7.0%", "$6300", "$120.00");
-        stocklist = new ArrayList<>();
-
-        stocklist.add(stock1);
-        stocklist.add(stock2);
-        stocklist.add(stock1);
-        stocklist.add(stock2);
-        stocklist.add(stock1);
-        stocklist.add(stock2);
-        stocklist.add(stock1);
-        stocklist.add(stock2);
-        stocklist.add(stock1);
-        stocklist.add(stock2);
-        stocklist.add(stock1);
-        stocklist.add(stock2);
-        stocklist.add(stock1);
-
-        stockListAdapter = new StockListAdapter(MainActivity.this, stocklist);
+        stockListAdapter = new StockListAdapter(MainActivity.this, UserAccount.getCurrUserAccount().getUserStocks(true));
         stockListView = (ListView) findViewById(R.id.stockListView);
         stockListView.setAdapter(stockListAdapter);
 
         stockListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long l) {
-                com.cse4322.mockstock.Stock item = (com.cse4322.mockstock.Stock) parent.getItemAtPosition(position);
+                UserStock item = (UserStock) parent.getItemAtPosition(position);
                 Intent i = new Intent(MainActivity.this, StockDetails.class);
-                i.putExtra("name", item.getCompany());
+                i.putExtra("name", item.getCompanyName());
                 i.putExtra("ticker", item.getTicker());
                 startActivity(i);
-
             }
         });
     }
@@ -98,9 +85,15 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
     }
 
     @Override
-    public void processFinished(ArrayList<Stock> output) {
+    public void stockUpdateProcessFinished(ArrayList<Stock> output) {
         for(Stock stock : output) {
             Log.v("StockUpdate Complete", stock.toString());
+//            UserAccount.getCurrUserAccount().buyStock(stock.getSymbol(), 10, stock.getQuote().getPrice().floatValue());
+            stockListAdapter.updateCurrUserStockList();
         }
+    }
+
+    @Override
+    public void userStockUpdateProcessFinished(ArrayList<UserStock> output) {
     }
 }
