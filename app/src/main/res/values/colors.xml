@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#81b641</color>
+    <color name="colorPrimary">#4ea645</color>
     <color name="colorPrimaryDark">#537c1f</color>
     <color name="colorAccent">#383838</color>
+    <color name="statusbar">#1B5E20</color>
+
+    <color name = "grey">#a19f9f</color>
+    <color name = "offwhite">#bcb7b7</color>
+    <color name = "white">#FFFFFF</color>
+    <color name="lightgrey">#f7f4f4</color>
+    <color name="button">#4fb543</color>
+    <color name="positive">#00DD00</color> <!-- color of text for positive value -->
+    <color name="negative">#DD0000</color> <!-- color of text for negative value -->
+
 </resources>
