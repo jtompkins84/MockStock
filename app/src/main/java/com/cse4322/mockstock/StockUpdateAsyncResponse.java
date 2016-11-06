@@ -8,5 +8,5 @@ import yahoofinance.Stock;
 
 public interface StockUpdateAsyncResponse {
 
-    void processFinished(ArrayList<Stock> output);
+    void stockUpdateProcessFinished(ArrayList<Stock> output);
 }

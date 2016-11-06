@@ -10,5 +10,7 @@
     <color name = "white">#FFFFFF</color>
     <color name="lightgrey">#f7f4f4</color>
     <color name="button">#4fb543</color>
+    <color name="positive">#00DD00</color> <!-- color of text for positive value -->
+    <color name="negative">#DD0000</color> <!-- color of text for negative value -->
 
 </resources>
