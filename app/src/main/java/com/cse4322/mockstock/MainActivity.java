@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         String[] testStocks = {"GRVY", "EBIO", "OSTK","TSLA", "CRIS", "MOMO"};
         new StockUpdateAsyncTask(this).execute(testStocks);
 
-//        UserAccount.getCurrUserAccount().resetAccount();
+        UserAccount.getCurrUserAccount().resetAccount(); // TODO temp. remove when Buy is implemented!
 
         stockListAdapter = new StockListAdapter(MainActivity.this, UserAccount.getCurrUserAccount().getUserStocks(true));
         stockListView = (ListView) findViewById(R.id.stockListView);
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
     public void stockUpdateProcessFinished(ArrayList<Stock> output) {
         for(Stock stock : output) {
             Log.v("StockUpdate Complete", stock.toString());
-//            UserAccount.getCurrUserAccount().buyStock(stock.getSymbol(), 10, stock.getQuote().getPrice().floatValue());
+            UserAccount.getCurrUserAccount().buyStock(stock.getSymbol(), 10, stock.getQuote().getPrice().floatValue());
 //            stockListAdapter.updateCurrUserStockList();
         }
     }
