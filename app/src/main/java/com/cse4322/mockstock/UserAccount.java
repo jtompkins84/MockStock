@@ -133,6 +133,10 @@ public class UserAccount extends SugarRecord {
         SugarRecord.deleteAll(UserStock.class, "user_name = ?", this.userName);
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
     public float getBalance() {
         return balance;
     }

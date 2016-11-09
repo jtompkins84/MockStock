@@ -1,6 +1,7 @@
 package com.cse4322.mockstock;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,6 +43,8 @@ public class UserStockUpdateAsyncTask extends AsyncTask<UserAccount, Void, Array
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        } catch (IndexOutOfBoundsException e) {
+            Log.d("UserStockUpdate", "User \'" + UserAccount.getCurrUserAccount().getUserName() + "\' has no purchased stocks.");
         }
 
         // update each user stock & add yahoofinance.Stock object to mStocks ArrayList<Stock>.
