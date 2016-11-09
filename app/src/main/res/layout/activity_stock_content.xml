@@ -373,7 +373,8 @@
         android:layout_height="wrap_content"
         android:weightSum="3"
         android:orientation="horizontal"
-        android:layout_below="@id/stockinfo">
+        android:layout_below="@id/stockinfo"
+        android:id="@+id/linearLayout">
         <Button
             android:text="BUY"
             android:layout_width="wrap_content"

@@ -87,7 +87,7 @@ public class UserStock extends SugarRecord implements Comparable<UserStock> {
             UserStock uStock = SugarRecord.find(UserStock.class, "ticker = ? and user_name = ?", ticker, userName).get(0);
 
             uStock.addStocks(amount);
-            uStock.addTotalInvestment(price);
+            uStock.addTotalInvestment(price * amount);
             uStock.save();
         }
         // catch the index-out-of-bounds exception that is thrown when the user does not own the referenced stock
@@ -164,7 +164,7 @@ public class UserStock extends SugarRecord implements Comparable<UserStock> {
     }
 
     public float getGainLossPercent() {
-        return totalFees / totalInvestment;
+        return (totalValue - totalInvestment) / totalValue;
     }
 
     public String getUserName() {

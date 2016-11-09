@@ -3,5 +3,6 @@
     <string name="title">t</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_stock_content">StockContent</string>
+    <string name="account_balance">$20000.00</string>
 
 </resources>
