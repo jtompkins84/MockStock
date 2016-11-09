@@ -2,7 +2,9 @@ package com.cse4322.mockstock;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.DebugUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.orm.SugarContext;
@@ -21,27 +24,35 @@ import com.orm.SugarDb;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import yahoofinance.*;
 import yahoofinance.Stock;
 
-public class MainActivity extends AppCompatActivity implements StockUpdateAsyncResponse, UserStockUpdateAsyncResponse{
+public class MainActivity extends AppCompatActivity implements StockUpdateAsyncResponse {
     private ArrayList<UserStock> stocklist;
     private StockListAdapter stockListAdapter;
     private ListView stockListView;
+    private TextView portfolioBalance;
     private boolean doListInitial = true;
+    private Timer refreshTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.mockstock_toolbar);
-//        setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.mockstock_toolbar);
+        setSupportActionBar(toolbar);
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.statusbar));
 
-        String[] testStocks = {"GRVY", "EBIO", "OSTK"};
-        testStocks = new String[]{"TSLA", "CRIS", "MOMO"};
+        portfolioBalance = (TextView) findViewById(R.id.accountbalance);
+
+
+        String[] testStocks = {"GRVY", "EBIO", "OSTK","TSLA", "CRIS", "MOMO"};
         new StockUpdateAsyncTask(this).execute(testStocks);
 
 //        UserAccount.getCurrUserAccount().resetAccount();
@@ -85,15 +96,48 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        updatePortfolio();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshTimer = new Timer();
+        refreshTimer.schedule(new RefreshStockTask(), 5000);
+        updatePortfolio();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        refreshTimer.cancel();
+        refreshTimer.purge();
+    }
+
+    @Override
     public void stockUpdateProcessFinished(ArrayList<Stock> output) {
         for(Stock stock : output) {
             Log.v("StockUpdate Complete", stock.toString());
 //            UserAccount.getCurrUserAccount().buyStock(stock.getSymbol(), 10, stock.getQuote().getPrice().floatValue());
-            stockListAdapter.updateCurrUserStockList();
+//            stockListAdapter.updateCurrUserStockList();
         }
     }
 
-    @Override
-    public void userStockUpdateProcessFinished(ArrayList<UserStock> output) {
+    public void updatePortfolio() {
+        float bal = UserAccount.getCurrUserAccount().getBalance();
+        String accBal = "$" + String.format("%.2f", bal);
+        if(portfolioBalance != null) portfolioBalance.setText(accBal);
+        Log.v("Portfolio Balance", "balance = " + accBal);
+    }
+
+    private class RefreshStockTask extends TimerTask {
+
+        @Override
+        public void run() {
+            if(stockListAdapter != null) stockListAdapter.updateCurrUserStockList();
+            refreshTimer.schedule(new RefreshStockTask(), 5000);
+        }
     }
 }

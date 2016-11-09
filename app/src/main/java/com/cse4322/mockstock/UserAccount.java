@@ -1,5 +1,7 @@
 package com.cse4322.mockstock;
 
+import android.widget.TextView;
+
 import com.orm.SugarRecord;
 
 import java.util.ArrayList;

@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -17,6 +19,8 @@ import java.util.ArrayList;
  */
 
 public class StockListAdapter extends ArrayAdapter<UserStock> implements UserStockUpdateAsyncResponse{
+    private static TextView portfolioBalance;
+
     public StockListAdapter(Context context, ArrayList<UserStock> itemName) {
         super(context, R.layout.portfolio_stock, itemName);
     }
@@ -47,7 +51,7 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
 
         if(stock.getGainLoss() < 0.0f) GLColor = negativeColor;
         else GLColor = positiveColor;
-        gain.setText("$" + String.format("%.2f",stock.getGainLoss()) );
+        gain.setText("$" + String.format("%.2f", Math.abs(stock.getGainLoss())) );
         gain.setTextColor(GLColor);
 
         percent.setText(String.format("%.2f", stock.getGainLossPercent()) + "%");
@@ -69,6 +73,8 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
 
     @Override
     public void userStockUpdateProcessFinished(ArrayList<UserStock> output) {
+        if(output == null) return;
+
         int i;
         int count = getCount();
         for(i = 0; i < count; i++) {
