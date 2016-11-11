@@ -18,6 +18,7 @@ import yahoofinance.Stock;
  */
 public class StockUpdateAsyncTask extends AsyncTask<String[], Void, ArrayList<Stock>> {
     private StockUpdateAsyncResponse mDelegate;
+
     private ArrayList<Stock> mStocks = new ArrayList<Stock>(100);
 
     public StockUpdateAsyncTask(StockUpdateAsyncResponse delegate) {
@@ -45,4 +46,5 @@ public class StockUpdateAsyncTask extends AsyncTask<String[], Void, ArrayList<St
     protected void onPostExecute(ArrayList<Stock> result) {
         mDelegate.stockUpdateProcessFinished(result);
     }
+
 }
