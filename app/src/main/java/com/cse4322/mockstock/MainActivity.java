@@ -56,6 +56,12 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.statusbar));
 
+        try {
+            UserAccount.createUserAccount(UserAccount.DEFAULT_USER_NAME);
+        } catch (UserAccount.UserAlreadyExistsException e) {
+            e.printStackTrace();
+        }
+
         portfolioBalance = (TextView) findViewById(R.id.accountbalance);
 
         String[] testStocks = {"GRVY", "EBIO", "OSTK","TSLA", "CRIS", "MOMO"};
