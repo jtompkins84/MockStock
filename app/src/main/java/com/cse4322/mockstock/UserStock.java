@@ -15,7 +15,10 @@ import yahoofinance.Stock;
  */
 public class UserStock extends SugarRecord implements Comparable<UserStock> {
     /** the name that this UserStock belongs to */
+
+
     private String userName;
+
     /** company name associated with this stock */
     private String companyName;
     /** company ticker associated with this stock */
@@ -165,10 +168,6 @@ public class UserStock extends SugarRecord implements Comparable<UserStock> {
 
     public float getGainLossPercent() {
         return (totalValue - totalInvestment) / totalValue;
-    }
-
-    public String getUserName() {
-        return userName;
     }
 
     public String getCompanyName() {

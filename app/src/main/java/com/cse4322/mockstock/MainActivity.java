@@ -1,14 +1,18 @@
 package com.cse4322.mockstock;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.DebugUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -23,6 +27,7 @@ import com.orm.SugarContext;
 import com.orm.SugarDb;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,13 +37,15 @@ import java.util.logging.LogRecord;
 import yahoofinance.*;
 import yahoofinance.Stock;
 
-public class MainActivity extends AppCompatActivity implements StockUpdateAsyncResponse {
+public class MainActivity extends AppCompatActivity implements StockUpdateAsyncResponse, SearchView.OnQueryTextListener {
     private ArrayList<UserStock> stocklist;
     private StockListAdapter stockListAdapter;
     private ListView stockListView;
     private TextView portfolioBalance;
     private boolean doListInitial = true;
     private Timer refreshTimer;
+
+    UserAccount current_user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,15 +58,16 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
 
         portfolioBalance = (TextView) findViewById(R.id.accountbalance);
 
-
         String[] testStocks = {"GRVY", "EBIO", "OSTK","TSLA", "CRIS", "MOMO"};
         new StockUpdateAsyncTask(this).execute(testStocks);
 
         UserAccount.getCurrUserAccount().resetAccount(); // TODO temp. remove when Buy is implemented!
 
+        // custom stock list adapter view. Search functionality will implement the "filterable" interface
         stockListAdapter = new StockListAdapter(MainActivity.this, UserAccount.getCurrUserAccount().getUserStocks(true));
         stockListView = (ListView) findViewById(R.id.stockListView);
         stockListView.setAdapter(stockListAdapter);
+
 
         stockListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -71,13 +79,42 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
                 startActivity(i);
             }
         });
+
+    }
+
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+
+        // this portion can be used to choose the closest match (which would be position 0 in the list)
+
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+
+        // retrieve the current filter from the current stockListAdapter
+        stockListAdapter.getFilter().filter(newText);
+        return true;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(this.getComponentName()));
+
+        // enabled query text listener to allow variant adapter results
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(this);
+
         return true;
+
     }
 
     @Override
@@ -119,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
     @Override
     public void stockUpdateProcessFinished(ArrayList<Stock> output) {
         for(Stock stock : output) {
-            Log.v("StockUpdate Complete", stock.toString());
+           // Log.v("StockUpdate Complete", stock.toString());
             UserAccount.getCurrUserAccount().buyStock(stock.getSymbol(), 10, stock.getQuote().getPrice().floatValue());
 //            stockListAdapter.updateCurrUserStockList();
         }
@@ -131,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         if(portfolioBalance != null) portfolioBalance.setText(accBal);
         Log.v("Portfolio Balance", "balance = " + accBal);
     }
+
 
     private class RefreshStockTask extends TimerTask {
 

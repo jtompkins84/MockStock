@@ -60,4 +60,8 @@ public class UserStockUpdateAsyncTask extends AsyncTask<UserAccount, Void, Array
     protected void onPostExecute(ArrayList<UserStock> result) {
         mDelegate.userStockUpdateProcessFinished(result);
     }
+
+    public ArrayList<UserStock> getUserStocks() {
+        return userStocks;
+    }
 }
