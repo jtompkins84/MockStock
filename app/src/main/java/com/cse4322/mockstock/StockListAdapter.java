@@ -30,8 +30,6 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
     ArrayList<UserStock> filteredList;
     StockFilter stockFilter;
 
-
-
     public StockListAdapter(Context context, ArrayList<UserStock> itemName) {
         super(context, R.layout.portfolio_stock, itemName);
 

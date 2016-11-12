@@ -66,10 +66,10 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
 
         portfolioBalance = (TextView) findViewById(R.id.accountbalance);
 
-        String[] testStocks = {"GRVY", "EBIO", "OSTK","TSLA", "CRIS", "MOMO"};
-        new StockUpdateAsyncTask(this).execute(testStocks);
+        // String[] testStocks = {"GRVY", "EBIO", "OSTK","TSLA", "CRIS", "MOMO"};
+        // new StockUpdateAsyncTask(this).execute(testStocks);
 
-        UserAccount.getCurrUserAccount().resetAccount(); // TODO temp. remove when Buy is implemented!
+        // UserAccount.getCurrUserAccount().resetAccount(); // TODO temp. remove when Buy is implemented!
 
         // custom stock list adapter view. Search functionality will implement the "filterable" interface
         stockListAdapter = new StockListAdapter(MainActivity.this, UserAccount.getCurrUserAccount().getUserStocks(true));
@@ -90,11 +90,11 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
 
     }
 
-
     @Override
     public boolean onQueryTextSubmit(String query) {
-
         // this portion can be used to choose the closest match (which would be position 0 in the list)
+        String[] testStocks = {query};
+        new StockUpdateAsyncTask(this).execute(testStocks);
 
         return false;
     }
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
     public boolean onQueryTextChange(String newText) {
 
         // retrieve the current filter from the current stockListAdapter
-        stockListAdapter.getFilter().filter(newText);
+        // stockListAdapter.getFilter().filter(newText);
         return true;
     }
 
@@ -122,7 +122,6 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         searchView.setOnQueryTextListener(this);
 
         return true;
-
     }
 
     @Override
@@ -176,7 +175,6 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         if(portfolioBalance != null) portfolioBalance.setText(accBal);
         Log.v("Portfolio Balance", "balance = " + accBal);
     }
-
 
     private class RefreshStockTask extends TimerTask {
 
