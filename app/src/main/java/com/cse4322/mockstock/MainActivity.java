@@ -56,8 +56,10 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.statusbar));
 
+        SugarContext.init(getApplicationContext());
+
         try {
-            UserAccount.createUserAccount(UserAccount.DEFAULT_USER_NAME);
+            UserAccount.createUserAccount(null);
         } catch (UserAccount.UserAlreadyExistsException e) {
             e.printStackTrace();
         }

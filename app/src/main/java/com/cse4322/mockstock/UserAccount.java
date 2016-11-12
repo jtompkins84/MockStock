@@ -1,5 +1,6 @@
 package com.cse4322.mockstock;
 
+import android.database.sqlite.SQLiteException;
 import android.widget.TextView;
 
 import com.orm.SugarRecord;
@@ -104,7 +105,14 @@ public class UserAccount extends SugarRecord {
 
     private UserAccount(String userName) throws UserAlreadyExistsException {
         try {
-            getUserAccount(userName);
+            try {
+                getUserAccount(userName);
+            }
+            catch(SQLiteException e) {
+                this.userName = userName;
+                save();
+                return;
+            }
 
             // if getUserAccount does not throw UserDoesNotExistException, then the user account
             // already exists and cannot be instantiated.
