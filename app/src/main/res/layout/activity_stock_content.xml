@@ -170,8 +170,8 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Ask Price"
-                            android:id="@+id/askprice"
+                            android:text="52-Week High"
+                            android:id="@+id/high52week"
                             android:background="@color/lightgrey"
                             android:padding="@dimen/attributepadding"
                             android:layout_below="@+id/openprice"
@@ -179,63 +179,63 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/askpriceamt"
+                            android:id="@+id/high52weekamt"
                             android:padding="@dimen/attributepadding"
                             android:text="113.21"
                             android:layout_alignParentRight="true"
-                            android:layout_alignTop="@id/askprice"/>
+                            android:layout_alignTop="@id/high52week"/>
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Change"
-                            android:id="@+id/changeprice"
-                            android:layout_below="@id/askprice"
+                            android:text="52 Week Low"
+                            android:id="@+id/low52week"
+                            android:layout_below="@id/high52weekamt"
                             android:background="@color/lightgrey"
                             android:padding="@dimen/attributepadding"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/changeamt"
+                            android:id="@+id/low52weekamt"
                             android:padding="@dimen/attributepadding"
                             android:text="0.87"
                             android:layout_alignParentRight="true"
-                            android:layout_alignTop="@id/changeprice"/>
+                            android:layout_alignTop="@id/low52week"/>
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="52-Week High"
-                            android:id="@+id/weekhigh"
-                            android:layout_below="@id/changeprice"
+                            android:text="1 Year Return"
+                            android:id="@+id/yearreturn"
+                            android:layout_below="@id/low52weekamt"
                             android:background="@color/lightgrey"
                             android:padding="@dimen/attributepadding"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/weekhighamt"
+                            android:id="@+id/yearreturnamt"
                             android:padding="@dimen/attributepadding"
                             android:text="148.07"
                             android:layout_alignParentRight="true"
-                            android:layout_alignTop="@id/weekhigh"/>
+                            android:layout_alignTop="@id/yearreturn"/>
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="52-Week Low"
-                            android:id="@+id/weeklow"
-                            android:layout_below="@id/weekhigh"
+                            android:text="1 Year Target"
+                            android:id="@+id/year1target"
+                            android:layout_below="@id/yearreturnamt"
                             android:background="@color/lightgrey"
                             android:padding="@dimen/attributepadding"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/weeklowamt"
+                            android:id="@+id/year1targetamt"
                             android:padding="@dimen/attributepadding"
                             android:text="98.05"
                             android:layout_alignParentRight="true"
-                            android:layout_alignTop="@id/weeklow"/>
+                            android:layout_alignTop="@id/year1target"/>
 
 
 
@@ -290,6 +290,25 @@
                             android:layout_alignParentRight="true"
                             android:layout_alignTop="@id/bidprice"/>
 
+
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Volume"
+                            android:id="@+id/volume"
+                            android:background="@color/lightgrey"
+                            android:padding="@dimen/attributepadding"
+                            android:layout_below="@+id/bidprice"
+                            android:layout_alignParentStart="true" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/volumeamt"
+                            android:padding="@dimen/attributepadding"
+                            android:text="14.6M"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignTop="@id/volume" />
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -297,7 +316,7 @@
                             android:id="@+id/marketcap"
                             android:background="@color/lightgrey"
                             android:padding="@dimen/attributepadding"
-                            android:layout_below="@+id/bidprice"
+                            android:layout_below="@+id/volume"
                             android:layout_alignParentStart="true" />
                         <TextView
                             android:layout_width="wrap_content"
@@ -330,8 +349,8 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="1 Yr Target"
-                            android:id="@+id/yeartarget"
+                            android:text="P/E Ratio"
+                            android:id="@+id/PEratio"
                             android:background="@color/lightgrey"
                             android:padding="@dimen/attributepadding"
                             android:layout_below="@+id/dividend"
@@ -344,24 +363,8 @@
                             android:padding="@dimen/attributepadding"
                             android:text="125.86"
                             android:layout_alignParentRight="true"
-                            android:layout_alignTop="@id/yeartarget" />
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Volume"
-                            android:id="@+id/volume"
-                            android:background="@color/lightgrey"
-                            android:padding="@dimen/attributepadding"
-                            android:layout_below="@+id/yeartarget"
-                            android:layout_alignParentStart="true" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/volumeamt"
-                            android:padding="@dimen/attributepadding"
-                            android:text="14.6M"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignTop="@id/volume" />
+                            android:layout_alignTop="@id/PEratio" />
+
                     </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
