@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by joseph on 10/2/16.
+ *
  */
 
 public class UserAccount extends SugarRecord {

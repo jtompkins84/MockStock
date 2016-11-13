@@ -40,6 +40,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:id="@+id/stock_price"
                     android:text="113.05"
                     android:layout_alignTop="@id/stockticker"
                     android:layout_alignParentRight="true"

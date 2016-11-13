@@ -8,8 +8,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Window;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
 
-public class StockDetails extends AppCompatActivity {
+import java.util.ArrayList;
+
+import yahoofinance.Stock;
+
+
+public class StockDetails extends AppCompatActivity implements StockUpdateAsyncResponse{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,18 +28,27 @@ public class StockDetails extends AppCompatActivity {
 
         try {
             toolbar = (Toolbar) findViewById(R.id.mockstock_toolbar);
-
             setSupportActionBar(toolbar);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        String companyname = getIntent().getExtras().getString("name");
         String ticker = getIntent().getExtras().getString("ticker");
+        new StockUpdateAsyncTask(this).execute(new String[]{ticker});
+    }
 
+    @Override
+    public void stockUpdateProcessFinished(ArrayList<Stock> output) {
+        Stock stock = output.get(0);
         TextView cmpyname = (TextView) findViewById(R.id.companyname);
         TextView tickername = (TextView) findViewById(R.id.stockticker);
-        cmpyname.setText(companyname);
-        tickername.setText(ticker);
+        TextView price = (TextView) findViewById(R.id.stock_price);
+        TextView amountChange = (TextView) findViewById(R.id.amtchange);
+        TextView percentChange = (TextView) findViewById(R.id.amtpctchange);
+        // TextView
+
+        cmpyname.setText(stock.getName());
+        tickername.setText(stock.getSymbol());
     }
 }

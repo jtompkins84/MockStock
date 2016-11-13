@@ -16,7 +16,6 @@ import yahoofinance.Stock;
 public class UserStock extends SugarRecord implements Comparable<UserStock> {
     /** the name that this UserStock belongs to */
 
-
     private String userName;
 
     /** company name associated with this stock */
