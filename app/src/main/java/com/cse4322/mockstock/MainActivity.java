@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
     @Override
     public boolean onQueryTextSubmit(String query) {
         // this portion can be used to choose the closest match (which would be position 0 in the list)
+        query = query.toUpperCase();
         String[] testStocks = {query};
         new StockUpdateAsyncTask(this).execute(testStocks);
 
@@ -164,7 +165,10 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
     public void stockUpdateProcessFinished(ArrayList<Stock> output) {
         for(Stock stock : output) {
            // Log.v("StockUpdate Complete", stock.toString());
-            UserAccount.getCurrUserAccount().buyStock(stock.getSymbol(), 10, stock.getQuote().getPrice().floatValue());
+            try {
+                UserAccount.getCurrUserAccount().buyStock(stock.getSymbol(), 10, stock.getQuote().getPrice().floatValue());
+            } catch (NullPointerException e) { e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "No ticker \'" + stock.getSymbol() + "\' was found.", Toast.LENGTH_LONG).show(); }
 //            stockListAdapter.updateCurrUserStockList();
         }
     }

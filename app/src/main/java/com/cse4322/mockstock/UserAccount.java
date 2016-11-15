@@ -127,6 +127,7 @@ public class UserAccount extends SugarRecord {
     public void buyStock(String ticker, int amount, float price) {
         balance -= price * amount;
         UserStock.buyStock(userName, ticker, amount, price);
+        save();
     }
 
     // TODO implement sellStock
