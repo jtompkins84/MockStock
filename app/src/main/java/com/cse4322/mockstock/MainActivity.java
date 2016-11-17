@@ -180,12 +180,15 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         Log.v("Portfolio Balance", "balance = " + accBal);
     }
 
+    /**
+     * Runs the stock data refresh
+     */
     private class RefreshStockTask extends TimerTask {
 
         @Override
         public void run() {
             if(stockListAdapter != null) stockListAdapter.updateCurrUserStockList();
-            refreshTimer.schedule(new RefreshStockTask(), 5000);
+            refreshTimer.schedule(new RefreshStockTask(), 8000);
         }
     }
 }

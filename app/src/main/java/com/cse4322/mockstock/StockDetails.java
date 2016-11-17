@@ -13,12 +13,15 @@ import org.w3c.dom.Text;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import yahoofinance.Stock;
 
 
-public class StockDetails extends AppCompatActivity implements StockUpdateAsyncResponse{
-    Stock stock;
+public class StockDetails extends AppCompatActivity implements StockUpdateAsyncResponse {
+    private Stock stock;
+    private Timer refreshTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +47,17 @@ public class StockDetails extends AppCompatActivity implements StockUpdateAsyncR
     @Override
     public void stockUpdateProcessFinished(ArrayList<Stock> output) {
         stock = output.get(0);
-        updateStockDetails();
+        populateStockDetails();
+        refreshTimer.schedule(new StockDetails.RefreshStockTask(), 5000);
     }
 
-    public void updateStockDetails() {
+    /**
+     * Populates the text views with data retrieved from the <code>Stock</code> object.
+     */
+    public void populateStockDetails() {
+        /* * * * * * * * * * * * * * * *
+         *
+         * * * * * * * * * * * * * * * */
         TextView cmpyname = (TextView) findViewById(R.id.companyname);
         TextView tickername = (TextView) findViewById(R.id.stockticker);
         TextView price = (TextView) findViewById(R.id.stock_price);
@@ -138,5 +148,25 @@ public class StockDetails extends AppCompatActivity implements StockUpdateAsyncR
             temp = stock.getStats().getPe().floatValue();
             peRatio.setText(String.format("%.2f", temp));
         }catch (NullPointerException e) { e.printStackTrace(); }
+    }
+
+    /**
+     * Launches the StockUpdateAsyncTask which retrieves the stock data using Yahoo Finance API.
+     */
+    private void updateStockData() {
+        new StockUpdateAsyncTask(this).execute(new String[]{stock.getSymbol()});
+    }
+
+    /**
+     * TimerTask class that will launch the AsyncTask which updates the stock data.
+     */
+    private class RefreshStockTask extends TimerTask {
+
+        @Override
+        public void run()  {
+            if(stock != null) {
+                updateStockData();
+            }
+        }
     }
 }
