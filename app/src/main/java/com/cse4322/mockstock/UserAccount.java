@@ -150,6 +150,13 @@ public class UserAccount extends SugarRecord {
         return balance;
     }
 
+    public UserStock getUserStock(String ticker) {
+        List<UserStock> userStock = SugarRecord.find(UserStock.class, "user_name = ? and ticker = ?", userName, ticker);
+
+        if(userStock.size() == 0) return null;
+        return userStock.get(0);
+    }
+
     public static class UserAlreadyExistsException extends Exception {
         public UserAlreadyExistsException(String message) {
             super(message);

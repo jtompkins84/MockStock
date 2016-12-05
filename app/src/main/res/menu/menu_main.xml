@@ -22,7 +22,8 @@
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="101"
-        app:showAsAction="never" />
+        app:showAsAction="never"
+        android:checked="false" />
 
 </menu>
 

@@ -26,7 +26,7 @@
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="AppTheme.AppBarOverlay">
-        <item name="android:titleTextColor" tools:targetApi="m">@color/colorAccent</item>
+        <item name="android:titleTextColor" tools:targetApi="m">@color/colorPrimary</item>
     </style>
 
     <style name="TitleStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">

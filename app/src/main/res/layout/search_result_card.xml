@@ -20,8 +20,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-
-
             <LinearLayout
                 android:layout_width="64dp"
                 android:layout_height="match_parent"
@@ -76,18 +74,6 @@
                     android:layout_centerHorizontal="true"
                     android:textSize="18dp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="QTY"
-                    android:textColor="@color/med_grey"
-                    android:id="@+id/QTY"
-                    android:layout_centerHorizontal="true"
-                    android:layout_below="@id/GL"
-                    android:textSize="18dp"/>
-
-
             </RelativeLayout>
 
             <RelativeLayout
@@ -111,8 +97,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="0"
-                    android:id="@+id/quantity"
+                    android:text="0.00%"
+                    android:id="@+id/percent"
                     android:textSize="@dimen/portfolio_font"
                     android:layout_below="@+id/gain"
                     android:layout_centerHorizontal="true" />
@@ -127,16 +113,6 @@
                 android:layout_weight="1.1"
                 android:gravity="center_vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Value"
-                    android:textColor="@color/med_grey"
-                    android:id="@+id/value"
-                    android:layout_marginTop="5dp"
-                    android:textSize="@dimen/portfolio_font"
-                    android:layout_centerHorizontal="true"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -156,16 +132,6 @@
                 android:orientation="vertical"
                 android:layout_weight=".2"
                 android:gravity="center_vertical|right">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="$0.00"
-                    android:id="@+id/valueamt"
-                    android:layout_marginTop="5dp"
-                    android:textSize="@dimen/portfolio_font"
-                    android:textColor="@color/colorPrimary"/>
 
                 <TextView
                     android:layout_width="wrap_content"

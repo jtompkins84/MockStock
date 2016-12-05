@@ -53,7 +53,7 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
         companyName.setSelected(true);
         TextView market = (TextView) customView.findViewById(R.id.markettype);
         TextView gain = (TextView) customView.findViewById(R.id.gain);
-        TextView percent = (TextView) customView.findViewById(R.id.percent);
+        TextView quantity = (TextView) customView.findViewById(R.id.quantity);
         TextView value = (TextView) customView.findViewById(R.id.valueamt);
         TextView price = (TextView) customView.findViewById(R.id.pricestock);
         int positiveColor = getContext().getResources().getColor(R.color.positive);
@@ -72,8 +72,7 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
         gain.setText("$" + String.format("%.2f", Math.abs(stock.getGainLoss())) );
         gain.setTextColor(GLColor);
 
-        percent.setText(String.format("%.2f", stock.getGainLossPercent()) + "%");
-        percent.setTextColor(GLColor);
+        quantity.setText(String.format("%d", stock.getNumberOwned()));
 
         if(stock.getTotalValue() < stock.getTotalInvestment()) valueColor = negativeColor;
         else valueColor = positiveColor;

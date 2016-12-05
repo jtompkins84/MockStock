@@ -6,6 +6,7 @@
     <color name="statusbar">#1B5E20</color>
 
     <color name = "grey">#a19f9f</color>
+    <color name = "med_grey">#636363</color>
     <color name = "offwhite">#bcb7b7</color>
     <color name = "white">#FFFFFF</color>
     <color name="lightgrey">#f7f4f4</color>

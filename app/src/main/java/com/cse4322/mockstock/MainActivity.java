@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
     private ArrayList<UserStock> stocklist;
     private StockListAdapter stockListAdapter;
     private ListView stockListView;
+    private SearchResultFragment searchResultFragment;
     private TextView portfolioBalance;
     private boolean doListInitial = true;
     private Timer refreshTimer;
