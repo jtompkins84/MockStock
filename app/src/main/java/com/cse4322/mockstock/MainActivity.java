@@ -66,10 +66,10 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
 
         portfolioBalance = (TextView) findViewById(R.id.accountbalance);
 
-        // String[] testStocks = {"GRVY", "EBIO", "OSTK","TSLA", "CRIS", "MOMO"};
-        // new StockUpdateAsyncTask(this).execute(testStocks);
-
-        // UserAccount.getCurrUserAccount().resetAccount(); // TODO temp. remove when Buy is implemented!
+//        UserAccount.getCurrUserAccount().resetAccount(); // TODO temp. remove when Buy is implemented!
+//
+//        String[] testStocks = {"GRVY", "EBIO", "OSTK","TSLA", "CRIS", "MOMO"};
+//        new StockUpdateAsyncTask(this).execute(testStocks);
 
         // custom stock list adapter view. Search functionality will implement the "filterable" interface
         stockListAdapter = new StockListAdapter(MainActivity.this, UserAccount.getCurrUserAccount().getUserStocks(true));

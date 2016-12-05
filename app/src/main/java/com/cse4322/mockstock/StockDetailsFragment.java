@@ -3,8 +3,7 @@ package com.cse4322.mockstock;
 import android.app.Fragment;
 
 /**
- * Created by joseph on 11/12/16.
+ * TODO Replace StockDetails Activity so that toolbar remains the same across views.
  */
-
 public class StockDetailsFragment extends Fragment {
 }

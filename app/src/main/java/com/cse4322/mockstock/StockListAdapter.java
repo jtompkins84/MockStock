@@ -45,10 +45,12 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
         View customView = myInflater.inflate(R.layout.portfolio_stock, parent, false);
 
         UserStock stock = getItem(position);
+        /******************************************************
+        ** INITIALIZE TextView OBJECTS
+        ******************************************************/
         TextView tickerName = (TextView) customView.findViewById(R.id.ticker);
         TextView companyName = (TextView) customView.findViewById(R.id.nameofcompany);
         companyName.setSelected(true);
-
         TextView market = (TextView) customView.findViewById(R.id.markettype);
         TextView gain = (TextView) customView.findViewById(R.id.gain);
         TextView percent = (TextView) customView.findViewById(R.id.percent);
@@ -57,7 +59,9 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
         int positiveColor = getContext().getResources().getColor(R.color.positive);
         int negativeColor = getContext().getResources().getColor(R.color.negative);
 
-
+        /******************************************************
+        ** SET TEXT FIELDS & TEXT COLOR
+        ******************************************************/
         int GLColor, valueColor;
         tickerName.setText(stock.getTicker());
         companyName.setText(stock.getCompanyName());
@@ -81,11 +85,19 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
         return customView;
     }
 
+    /**
+     * Launches AsyncTask that retrieves data from the Yahoo Finance API
+     */
     public void updateCurrUserStockList() {
         new UserStockUpdateAsyncTask(this).execute(UserAccount.getCurrUserAccount());
     }
 
     @Override
+    /**
+     * Refreshes user stock information with data retrieved by the
+     * <code>UserStockUpdateAsyncTask</code> calling this method.
+     * @param output the output from the <code>UserStockUpdateAsyncTask</code> calling this method
+     */
     public void userStockUpdateProcessFinished(ArrayList<UserStock> output) {
         if(output == null) return;
 
@@ -158,7 +170,7 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
         3. if a match occured between what is searched, then place it in the filtered list.
         4. display filtered list.
      */
-    
+
     private class StockFilter extends Filter {
 
 
@@ -197,7 +209,6 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             filteredList = (ArrayList<UserStock>) filterResults.values;
             notifyDataSetChanged();
-
         }
     }
 }

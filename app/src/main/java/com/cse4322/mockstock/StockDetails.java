@@ -18,7 +18,10 @@ import java.util.TimerTask;
 
 import yahoofinance.Stock;
 
-
+/**
+ * Activity that displays the details of particular stock. Values are populated
+ * using stock data retrieved through Yahoo Finace API.
+ */
 public class StockDetails extends AppCompatActivity implements StockUpdateAsyncResponse {
     private Stock stock;
     private Timer refreshTimer;
@@ -27,6 +30,7 @@ public class StockDetails extends AppCompatActivity implements StockUpdateAsyncR
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock_content);
+        refreshTimer = new Timer();
 
         WindowDecorActionBar winDecorActBar;
 
@@ -55,9 +59,9 @@ public class StockDetails extends AppCompatActivity implements StockUpdateAsyncR
      * Populates the text views with data retrieved from the <code>Stock</code> object.
      */
     public void populateStockDetails() {
-        /* * * * * * * * * * * * * * * *
-         *
-         * * * * * * * * * * * * * * * */
+        /******************************************************
+        ** INITIALIZE  TextView OBJECTS
+        ******************************************************/
         TextView cmpyname = (TextView) findViewById(R.id.companyname);
         TextView tickername = (TextView) findViewById(R.id.stockticker);
         TextView price = (TextView) findViewById(R.id.stock_price);
@@ -79,6 +83,9 @@ public class StockDetails extends AppCompatActivity implements StockUpdateAsyncR
         int negativeColor = getResources().getColor(R.color.negative);
         int color;
 
+        /******************************************************
+        ** SET TEXT FIELDS AND TEXT COLOR
+        ******************************************************/
         cmpyname.setText(stock.getName());
         tickername.setText(stock.getSymbol());
         float temp = stock.getQuote().getPrice().floatValue();
@@ -129,7 +136,7 @@ public class StockDetails extends AppCompatActivity implements StockUpdateAsyncR
         }
         volume.setText(String.format("%2d", tempLong) + magnitude );
 
-        try {
+        try { // catches cases where market cap is unavailable
             temp = stock.getStats().getMarketCap().scaleByPowerOfTen(-6).floatValue();
             if (temp < 1000.0f) magnitude = "M";
             else {
@@ -139,12 +146,12 @@ public class StockDetails extends AppCompatActivity implements StockUpdateAsyncR
             marketCap.setText(String.format("%.2f", temp) + magnitude);
         } catch (NullPointerException e) { e.printStackTrace(); }
 
-        try {
+        try { // catches cases where annual yeild is unavailable
             temp = stock.getDividend().getAnnualYieldPercent().floatValue();
             dividend.setText(String.format("%.2f", temp));
         } catch (NullPointerException e) { e.printStackTrace(); }
 
-        try {
+        try { // catches cases where PE ratio is unavailable
             temp = stock.getStats().getPe().floatValue();
             peRatio.setText(String.format("%.2f", temp));
         }catch (NullPointerException e) { e.printStackTrace(); }
