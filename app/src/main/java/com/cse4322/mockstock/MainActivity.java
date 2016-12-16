@@ -37,6 +37,7 @@ import java.util.logging.LogRecord;
 import yahoofinance.*;
 import yahoofinance.Stock;
 
+
 public class MainActivity extends AppCompatActivity implements StockUpdateAsyncResponse, SearchView.OnQueryTextListener {
     private ArrayList<UserStock> stocklist;
     private StockListAdapter stockListAdapter;
