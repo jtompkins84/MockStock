@@ -100,12 +100,16 @@ public class StockDetails extends AppCompatActivity implements StockUpdateAsyncR
         amountChange.setTextColor(color);
         percentChange.setTextColor(color);
 
-        temp = stock.getQuote().getAsk().floatValue();
-        askPrice.setText(String.format("%.2f", temp));
-        temp = stock.getQuote().getBid().floatValue();
-        bidPrice.setText(String.format("%.2f", temp));
-        temp = stock.getQuote().getDayHigh().floatValue();
-        highPrice.setText(String.format("%.2f", temp));
+        try {
+            temp = stock.getQuote().getAsk().floatValue();
+            askPrice.setText(String.format("%.2f", temp));
+            temp = stock.getQuote().getBid().floatValue();
+            bidPrice.setText(String.format("%.2f", temp));
+            temp = stock.getQuote().getDayHigh().floatValue();
+            highPrice.setText(String.format("%.2f", temp));
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
         try {
             temp = stock.getQuote().getOpen().floatValue();
             openPrice.setText(String.format("%.2f", temp));

@@ -83,10 +83,11 @@ public class UserStock extends SugarRecord implements Comparable<UserStock> {
      * @param amount the amount of stock to buy
      * @param price the price of the stock
      */
-    public static void buyStock(String userName, String ticker, int amount, float price) {
+    public static UserStock buyStock(String userName, String ticker, int amount, float price) {
         // attempt to find the stock owned by userName
+        UserStock uStock = null;
         try {
-            UserStock uStock = SugarRecord.find(UserStock.class, "ticker = ? and user_name = ?", ticker, userName).get(0);
+            uStock = SugarRecord.find(UserStock.class, "ticker = ? and user_name = ?", ticker, userName).get(0);
 
             uStock.addStocks(amount);
             uStock.addTotalInvestment(price * amount);
@@ -96,6 +97,8 @@ public class UserStock extends SugarRecord implements Comparable<UserStock> {
         catch (IndexOutOfBoundsException e) {
             new UserStock(userName, ticker, amount, price); // UserStock is created and saved
         }
+
+        return uStock;
     }
 
     // TODO implement sellStock

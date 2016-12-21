@@ -124,10 +124,12 @@ public class UserAccount extends SugarRecord {
         }
     }
 
-    public void buyStock(String ticker, int amount, float price) {
+    public UserStock buyStock(String ticker, int amount, float price) {
         balance -= price * amount;
-        UserStock.buyStock(userName, ticker, amount, price);
+        UserStock userStock = UserStock.buyStock(userName, ticker, amount, price);
         save();
+
+        return userStock;
     }
 
     // TODO implement sellStock
@@ -140,6 +142,7 @@ public class UserAccount extends SugarRecord {
     public void resetAccount() {
         balance = 20000.0f;
         SugarRecord.deleteAll(UserStock.class, "user_name = ?", this.userName);
+        save();
     }
 
     public String getUserName() {
@@ -166,11 +169,5 @@ public class UserAccount extends SugarRecord {
         public UserDoesNotExistException(String message) {
             super(message);
         }
-    }
-
-    private static class CurrUserAccount extends SugarRecord {
-        protected String userName;
-
-
     }
 }

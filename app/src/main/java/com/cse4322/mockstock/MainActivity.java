@@ -68,16 +68,10 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
 
         portfolioBalance = (TextView) findViewById(R.id.accountbalance);
 
-//        UserAccount.getCurrUserAccount().resetAccount(); // TODO temp. remove when Buy is implemented!
-//
-//        String[] testStocks = {"GRVY", "EBIO", "OSTK","TSLA", "CRIS", "MOMO"};
-//        new StockUpdateAsyncTask(this).execute(testStocks);
-
-        // custom stock list adapter view. Search functionality will implement the "filterable" interface
+        // custom stock list adapter view.
         stockListAdapter = new StockListAdapter(MainActivity.this, UserAccount.getCurrUserAccount().getUserStocks(true));
         stockListView = (ListView) findViewById(R.id.stockListView);
         stockListView.setAdapter(stockListAdapter);
-
 
         stockListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -89,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
                 startActivity(i);
             }
         });
-
     }
 
     @Override
@@ -118,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(this.getComponentName()));
 
         // enabled query text listener to allow variant adapter results
         searchView.setSubmitButtonEnabled(true);
@@ -135,7 +127,9 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.reset_account) {
+            UserAccount.getCurrUserAccount().resetAccount();
+            stockListAdapter.notifyDataSetChanged();
             return true;
         }
 
@@ -168,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         for(Stock stock : output) {
            // Log.v("StockUpdate Complete", stock.toString());
             try {
-                UserAccount.getCurrUserAccount().buyStock(stock.getSymbol(), 10, stock.getQuote().getPrice().floatValue());
+                UserStock userStock = UserAccount.getCurrUserAccount().buyStock(stock.getSymbol(), 10, stock.getQuote().getPrice().floatValue());
             } catch (NullPointerException e) { e.printStackTrace();
                 Toast.makeText(getApplicationContext(), "No ticker \'" + stock.getSymbol() + "\' was found.", Toast.LENGTH_LONG).show(); }
 //            stockListAdapter.updateCurrUserStockList();

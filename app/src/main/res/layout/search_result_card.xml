@@ -137,7 +137,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="103.12"
+                    android:text="0.00"
                     android:textSize="@dimen/portfolio_font"
                     android:id="@+id/pricestock"
                     android:layout_below="@+id/valueamt"

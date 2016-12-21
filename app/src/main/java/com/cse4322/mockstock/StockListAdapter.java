@@ -2,11 +2,14 @@ package com.cse4322.mockstock;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.support.annotation.ColorRes;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -16,6 +19,9 @@ import org.w3c.dom.Text;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
+
+import yahoofinance.Stock;
 
 /**
  * Created by Winston on 10/9/2016.
@@ -23,6 +29,7 @@ import java.util.ArrayList;
 
 public class StockListAdapter extends ArrayAdapter<UserStock> implements UserStockUpdateAsyncResponse, Filterable{
     private static TextView portfolioBalance;
+    private ArrayList<PortfolioCardView> textControllers;
 
     public int number_of_stocks;
 
@@ -32,6 +39,7 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
 
     public StockListAdapter(Context context, ArrayList<UserStock> itemName) {
         super(context, R.layout.portfolio_stock, itemName);
+        textControllers = new ArrayList<>();
 
         this.stock_list = itemName;
         this.filteredList = itemName;
@@ -41,47 +49,23 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
-        LayoutInflater myInflater = LayoutInflater.from(getContext());
-        View customView = myInflater.inflate(R.layout.portfolio_stock, parent, false);
-
         UserStock stock = getItem(position);
-        /******************************************************
-        ** INITIALIZE TextView OBJECTS
-        ******************************************************/
-        TextView tickerName = (TextView) customView.findViewById(R.id.ticker);
-        TextView companyName = (TextView) customView.findViewById(R.id.nameofcompany);
-        companyName.setSelected(true);
-        TextView market = (TextView) customView.findViewById(R.id.markettype);
-        TextView gain = (TextView) customView.findViewById(R.id.gain);
-        TextView quantity = (TextView) customView.findViewById(R.id.quantity);
-        TextView value = (TextView) customView.findViewById(R.id.valueamt);
-        TextView price = (TextView) customView.findViewById(R.id.pricestock);
-        int positiveColor = getContext().getResources().getColor(R.color.positive);
-        int negativeColor = getContext().getResources().getColor(R.color.negative);
 
-        /******************************************************
-        ** SET TEXT FIELDS & TEXT COLOR
-        ******************************************************/
-        int GLColor, valueColor;
-        tickerName.setText(stock.getTicker());
-        companyName.setText(stock.getCompanyName());
-        market.setText(stock.getExchange());
+        PortfolioCardView portfolioCard = (PortfolioCardView)convertView;
+        if(portfolioCard == null) {
+            LayoutInflater myInflater = LayoutInflater.from(getContext());
+            portfolioCard = (PortfolioCardView) myInflater.inflate(R.layout.portfolio_stock, parent, false);
+            portfolioCard.init(stock);
+        }
+//        else if(stock != null && portfolioCard.getTicker().compareToIgnoreCase(stock.getTicker()) != 0){
+//            LayoutInflater myInflater = LayoutInflater.from(getContext());
+//            portfolioCard = (PortfolioCardView) myInflater.inflate(R.layout.portfolio_stock, parent, false);
+//            portfolioCard.init(stock);
+//        }
+        else
+            portfolioCard.updateText();
 
-        if(stock.getGainLoss() < 0.0f) GLColor = negativeColor;
-        else GLColor = positiveColor;
-        gain.setText("$" + String.format("%.2f", Math.abs(stock.getGainLoss())) );
-        gain.setTextColor(GLColor);
-
-        quantity.setText(String.format("%d", stock.getNumberOwned()));
-
-        if(stock.getTotalValue() < stock.getTotalInvestment()) valueColor = negativeColor;
-        else valueColor = positiveColor;
-        value.setText("$" + String.format("%.2f", stock.getTotalValue()) );
-        value.setTextColor(valueColor);
-
-        price.setText("$" + String.format("%.2f", stock.getCurrPrice()) );
-
-        return customView;
+        return portfolioCard;
     }
 
     /**
@@ -99,16 +83,6 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
      */
     public void userStockUpdateProcessFinished(ArrayList<UserStock> output) {
         if(output == null) return;
-
-        int i;
-        int count = getCount();
-
-        for(i = 0; i < count; i++) {
-            remove(getItem(0));
-        }
-        for(i = 0; i < output.size(); i++) {
-            add(output.get(i));
-        }
 
         notifyDataSetChanged();
     }
