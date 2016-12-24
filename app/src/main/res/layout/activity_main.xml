@@ -34,6 +34,15 @@
             android:id="@+id/search_results"
             tools:layout="@layout/fragment_search_results" />
 
+        <fragment
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:name="com.cse4322.mockstock.SearchResultFragment"
+            android:id="@+id/fragment_search_results"
+            tools:layout="@layout/fragment_search_results" />
+
         <ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

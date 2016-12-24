@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- User avatar -->
         <LinearLayout
             android:padding="@dimen/activity_horizontal_margin"
             android:orientation="horizontal"

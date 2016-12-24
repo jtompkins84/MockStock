@@ -44,7 +44,7 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
         this.stock_list = itemName;
         this.filteredList = itemName;
 
-        getFilter();        // implement filter for search processing
+        getFilter(); // implement filter for search processing
     }
 
     @Override
@@ -63,8 +63,9 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
 //            portfolioCard.init(stock);
 //        }
         else
-            portfolioCard.updateText();
+            portfolioCard.updateText(stock);
 
+        notifyDataSetChanged();
         return portfolioCard;
     }
 
@@ -84,6 +85,15 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
     public void userStockUpdateProcessFinished(ArrayList<UserStock> output) {
         if(output == null) return;
 
+        for(int i = 0; i < output.size(); i++) {
+            String outputTicker = output.get(i).getTicker();
+            if(i < getCount()) {
+                String itemTicker = getItem(i).getTicker();
+                if(itemTicker.compareToIgnoreCase(outputTicker) != 0 ) insert(output.get(i), i);
+            }
+            else add(output.get(i));
+        }
+
         notifyDataSetChanged();
     }
 
@@ -95,7 +105,6 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
         2. the adapter will be a filtered list which does not contain all stocks
         3. update the view to have the filtered list
      */
-
     public int getNumber_of_stocks() {
         return number_of_stocks;
     }
@@ -143,9 +152,7 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
         3. if a match occured between what is searched, then place it in the filtered list.
         4. display filtered list.
      */
-
     private class StockFilter extends Filter {
-
 
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {

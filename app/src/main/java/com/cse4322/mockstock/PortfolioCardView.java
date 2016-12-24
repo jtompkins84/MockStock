@@ -61,11 +61,17 @@ public class PortfolioCardView extends CardView {
     public void updateText(UserStock stock) {
         int GLColor, valueColor;
 
+        if(ticker.getText().toString().compareToIgnoreCase(stock.getTicker()) != 0) {
+            ticker.setText(stock.getTicker());
+            companyName.setText(stock.getCompanyName());
+            market.setText(stock.getExchange());
+        }
+
         if(stock.getGainLoss() < 0.0f) GLColor = negativeColor;
         else GLColor = positiveColor;
         gainLoss.setText("$" + String.format("%.2f", Math.abs(stock.getGainLoss())) );
         gainLoss.setTextColor(GLColor);
-        Log.d(PortfolioCardView.class.getSimpleName(), "updateText: " + stock.getTicker());
+//        Log.d(PortfolioCardView.class.getSimpleName(), "updateText: " + stock.getTicker());
 
         quantity.setText(String.format("%d", stock.getNumberOwned()));
 
