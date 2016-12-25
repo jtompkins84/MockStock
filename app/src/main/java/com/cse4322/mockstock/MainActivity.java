@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
             doSearchUpdate = false;
         }
 
-        return true;
+        return false;
     }
 
     @Override
@@ -173,7 +173,6 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
     @Override
     public void stockUpdateProcessFinished(ArrayList<Stock> output) {
         for(Stock stock : output) {
-           // Log.v("StockUpdate Complete", stock.toString());
             try {
                 UserStock userStock = UserAccount.getCurrUserAccount().buyStock(stock.getSymbol(), 10, stock.getQuote().getPrice().floatValue());
             } catch (NullPointerException e) {
@@ -185,20 +184,23 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
             }
             searchView.setIconified(true);
             searchView.onActionViewCollapsed();
+            stockListAdapter.refreshStocks();
+            updatePortfolio();
 
-            SearchResultFragment fr = new SearchResultFragment();
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fm.beginTransaction();
-            fragmentTransaction.replace(R.id.search_results, fr);
-            fragmentTransaction.commit();
+//            SearchResultFragment fr = new SearchResultFragment();
+//            FragmentManager fm = getSupportFragmentManager();
+//            FragmentTransaction fragmentTransaction = fm.beginTransaction();
+//            fragmentTransaction.replace(R.id.search_results, fr);
+//            fragmentTransaction.commit();
 
-            stockListAdapter.updateCurrUserStockList();
-            onResume();
+//            stockListAdapter.updateCurrUserStockList(); // TODO REMOVE FROM HERE ---->
+//            onResume();
 //            Intent intent = new Intent(this, MainActivity.class);
 //            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 //                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 //            this.startActivity(intent);
+            // TODO <----- TO HERE
         }
     }
 

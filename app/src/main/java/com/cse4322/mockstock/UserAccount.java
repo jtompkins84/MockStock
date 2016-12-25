@@ -29,7 +29,7 @@ public class UserAccount extends SugarRecord {
      */
     public static UserAccount getUserAccount(String userName) throws UserDoesNotExistException {
         List<UserAccount> userAccounts = UserAccount.find(UserAccount.class, "user_name = ?", userName);
-        UserAccount account = null;
+        UserAccount account;
 
         try {
             account = userAccounts.get(0);
@@ -58,7 +58,6 @@ public class UserAccount extends SugarRecord {
                 }
             }
         }
-
         return currUserAccount;
     }
 

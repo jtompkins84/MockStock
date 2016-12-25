@@ -54,8 +54,9 @@ public class UserStock extends SugarRecord implements Comparable<UserStock> {
      * @return the <code>List</code> of sorted stocks
      */
     public static List<UserStock> getSortedUserStocks(String userName) {
-        List<UserStock> userStocks = SugarRecord.find(UserStock.class, "user_name = ?", userName);
-        Collections.sort(userStocks);
+//        List<UserStock> userStocks = SugarRecord.find(UserStock.class, "user_name = ?", userName);
+//        Collections.sort(userStocks);
+        List<UserStock> userStocks = UserStock.find(UserStock.class, "user_name = ?", new String[] {userName}, null, "ticker asc", null);
 
         return userStocks;
     }
@@ -145,6 +146,16 @@ public class UserStock extends SugarRecord implements Comparable<UserStock> {
         totalValue = numberOwned * price;
         currPrice = price;
         this.save();
+    }
+
+    public void refresh() {
+        List<UserStock> res = UserStock.find(UserStock.class, "user_name = ? and ticker = ?", this.userName, this.ticker);
+
+        numberOwned = res.get(0).getNumberOwned();
+        totalInvestment = res.get(0).getTotalInvestment();
+        totalFees = res.get(0).getTotalFees();
+        totalValue = res.get(0).getTotalValue();
+        currPrice = res.get(0).getCurrPrice();
     }
 
     /**

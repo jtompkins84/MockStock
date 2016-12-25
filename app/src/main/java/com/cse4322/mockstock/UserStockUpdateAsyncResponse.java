@@ -8,6 +8,5 @@ import java.util.ArrayList;
  */
 
 public interface UserStockUpdateAsyncResponse {
-
     void userStockUpdateProcessFinished(ArrayList<UserStock> output);
 }

@@ -61,6 +61,8 @@ public class PortfolioCardView extends CardView {
     public void updateText(UserStock stock) {
         int GLColor, valueColor;
 
+        userStock.refresh();
+
         if(ticker.getText().toString().compareToIgnoreCase(stock.getTicker()) != 0) {
             ticker.setText(stock.getTicker());
             companyName.setText(stock.getCompanyName());
@@ -80,7 +82,7 @@ public class PortfolioCardView extends CardView {
 
         if(stock.getTotalValue() < stock.getTotalInvestment()) valueColor = negativeColor;
         else valueColor = positiveColor;
-        totalValue.setText("$" + String.format("%.2f", stock.getTotalValue()) );
+        totalValue.setText("$" + String.format("%.2f", stock.getTotalValue()));
         totalValue.setTextColor(valueColor);
     }
 

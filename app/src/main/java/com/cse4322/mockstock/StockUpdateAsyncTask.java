@@ -19,7 +19,7 @@ import yahoofinance.Stock;
 public class StockUpdateAsyncTask extends AsyncTask<String[], Void, ArrayList<Stock>> {
     private StockUpdateAsyncResponse mDelegate;
 
-    private ArrayList<Stock> mStocks = new ArrayList<Stock>(100);
+    private ArrayList<Stock> mStocks = new ArrayList<Stock>();
 
     public StockUpdateAsyncTask(StockUpdateAsyncResponse delegate) {
         mDelegate = delegate;
@@ -27,7 +27,7 @@ public class StockUpdateAsyncTask extends AsyncTask<String[], Void, ArrayList<St
 
     @Override
     protected ArrayList<Stock> doInBackground(String[]... params) {
-        Map<String, Stock> stocks = null;
+        Map<String, Stock> stocks;
         try {
             stocks = YahooFinance.get(params[0]);
         } catch (IOException e) {

@@ -13,7 +13,8 @@
         android:enabled="true"
         android:actionLayout="@color/cardview_light_background" />
 
-    <item android:id="@+id/reset_account"
+    <item
+        android:id="@+id/reset_account"
         android:title="@string/menu_reset_account"
         android:orderInCategory="101"
         android:actionLayout="@layout/activity_portfolio"

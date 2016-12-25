@@ -16,7 +16,7 @@ import yahoofinance.Stock;
 
 public class UserStockUpdateAsyncTask extends AsyncTask<UserAccount, Void, ArrayList<UserStock>> {
     private UserStockUpdateAsyncResponse mDelegate;
-    private ArrayList<Stock> mStocks = new ArrayList<Stock>(100);
+    private ArrayList<Stock> mStocks = new ArrayList<Stock>();
     private ArrayList<UserStock> userStocks;
 
     public UserStockUpdateAsyncTask(UserStockUpdateAsyncResponse delegate) {
@@ -50,7 +50,7 @@ public class UserStockUpdateAsyncTask extends AsyncTask<UserAccount, Void, Array
         // update each user stock & add yahoofinance.Stock object to mStocks ArrayList<Stock>.
         for(UserStock uStock : userStocks) {
             uStock.updateUserStock(stocks.get(uStock.getTicker()));
-            mStocks.add(stocks.get(uStock.getTicker())); // TODO Not sure mStocks member is still necessary...
+//            mStocks.add(stocks.get(uStock.getTicker())); // TODO Not sure mStocks member is still necessary...
         }
 
         return userStocks; // return resulting list of yahoofinance.Stock objects

@@ -57,11 +57,11 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
             portfolioCard = (PortfolioCardView) myInflater.inflate(R.layout.portfolio_stock, parent, false);
             portfolioCard.init(stock);
         }
-//        else if(stock != null && portfolioCard.getTicker().compareToIgnoreCase(stock.getTicker()) != 0){
-//            LayoutInflater myInflater = LayoutInflater.from(getContext());
-//            portfolioCard = (PortfolioCardView) myInflater.inflate(R.layout.portfolio_stock, parent, false);
-//            portfolioCard.init(stock);
-//        }
+        else if(stock != null && portfolioCard.getTicker().compareToIgnoreCase(stock.getTicker()) != 0){
+            LayoutInflater myInflater = LayoutInflater.from(getContext());
+            portfolioCard = (PortfolioCardView) myInflater.inflate(R.layout.portfolio_stock, parent, false);
+            portfolioCard.init(stock);
+        }
         else
             portfolioCard.updateText(stock);
 
@@ -70,10 +70,22 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
     }
 
     /**
-     * Launches AsyncTask that retrieves data from the Yahoo Finance API
+     * Launches AsyncTask that retrieves data from the Yahoo Finance API, updates UserStocks belonging
+     * to the current user, and refreshes this <code>StockListAdapter</code>'s list.
      */
     public void updateCurrUserStockList() {
         new UserStockUpdateAsyncTask(this).execute(UserAccount.getCurrUserAccount());
+    }
+
+    /**
+     * Refreshes the stocks with data Sugar ORM data.
+     */
+    public void refreshStocks() {
+        for(int i = 0; i < getCount(); i++) {
+            getItem(i).refresh();
+        }
+
+        notifyDataSetInvalidated();
     }
 
     @Override
@@ -90,6 +102,9 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
             if(i < getCount()) {
                 String itemTicker = getItem(i).getTicker();
                 if(itemTicker.compareToIgnoreCase(outputTicker) != 0 ) insert(output.get(i), i);
+                else {
+                    getItem(i).refresh();
+                }
             }
             else add(output.get(i));
         }
@@ -98,12 +113,12 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
     }
 
     /*
-        The following functionality is gathered from https://coderwall.com/p/zpwrsg/add-search-function-to-list-view-in-android
-        The search works as follows...
+    The following functionality is gathered from https://coderwall.com/p/zpwrsg/add-search-function-to-list-view-in-android
+    The search works as follows...
 
-        1. user enters in text in search bar
-        2. the adapter will be a filtered list which does not contain all stocks
-        3. update the view to have the filtered list
+    1. user enters in text in search bar
+    2. the adapter will be a filtered list which does not contain all stocks
+    3. update the view to have the filtered list
      */
     public int getNumber_of_stocks() {
         return number_of_stocks;
@@ -146,14 +161,13 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
     }
 
     /*
-        Bulk search functionality.
-        1. Get input from search bar
-        2. Create a new temp list to hold filtered results
-        3. if a match occured between what is searched, then place it in the filtered list.
-        4. display filtered list.
+    Bulk search functionality.
+    1. Get input from search bar
+    2. Create a new temp list to hold filtered results
+    3. if a match occured between what is searched, then place it in the filtered list.
+    4. display filtered list.
      */
     private class StockFilter extends Filter {
-
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
             FilterResults filterResults = new FilterResults();
