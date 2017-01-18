@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:id="@+id/fragment_search_results"
-    android:alpha="1.0"
-    android:backgroundTintMode="src_atop"
-    android:background="@android:color/white"
-    android:clickable="true">
+    android:id="@+id/fragment_portfolio">
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/search_results_list"
+        android:id="@+id/portfolio_list"
         android:choiceMode="singleChoice"
         android:divider="@android:color/transparent"
         android:dividerHeight="-5.0dp"

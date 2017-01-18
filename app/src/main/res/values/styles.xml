@@ -45,6 +45,11 @@
         <item name="android:actionMenuTextColor">@color/colorPrimary</item>
     </style>
 
+    <style name="ConfirmButton" parent="Base.Widget.AppCompat.Button">
+        <item name="android:colorButtonNormal">@color/colorPrimary</item>
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
     <style name="MyAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
     </style>
 </resources>

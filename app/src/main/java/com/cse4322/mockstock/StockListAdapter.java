@@ -52,14 +52,11 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
         UserStock stock = getItem(position);
 
         PortfolioCardView portfolioCard = (PortfolioCardView)convertView;
-        if(portfolioCard == null) {
-            LayoutInflater myInflater = LayoutInflater.from(getContext());
-            portfolioCard = (PortfolioCardView) myInflater.inflate(R.layout.portfolio_stock, parent, false);
-            portfolioCard.init(stock);
-        }
-        else if(stock != null && portfolioCard.getTicker().compareToIgnoreCase(stock.getTicker()) != 0){
-            LayoutInflater myInflater = LayoutInflater.from(getContext());
-            portfolioCard = (PortfolioCardView) myInflater.inflate(R.layout.portfolio_stock, parent, false);
+        // If the PortfolioCardView at position has not been inflated, or if it is being recycled...
+        if(portfolioCard == null ||
+                stock != null && portfolioCard.getTicker().compareToIgnoreCase(stock.getTicker()) != 0) {
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            portfolioCard = (PortfolioCardView) inflater.inflate(R.layout.portfolio_stock, parent, false);
             portfolioCard.init(stock);
         }
         else
@@ -75,17 +72,6 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
      */
     public void updateCurrUserStockList() {
         new UserStockUpdateAsyncTask(this).execute(UserAccount.getCurrUserAccount());
-    }
-
-    /**
-     * Refreshes the stocks with data Sugar ORM data.
-     */
-    public void refreshStocks() {
-        for(int i = 0; i < getCount(); i++) {
-            getItem(i).refresh();
-        }
-
-        notifyDataSetInvalidated();
     }
 
     @Override
@@ -182,14 +168,11 @@ public class StockListAdapter extends ArrayAdapter<UserStock> implements UserSto
                         tempList.add(stock_list.get(i));
                     }
                 }
-
                 // setup the filter list size to avoid out of bounds exceptions
                 filterResults.count = tempList.size();
-
                 // set the values to the filtered list.
                 filterResults.values = tempList;
             } else {
-
                 // Handles a case where the search is blank and avoid null exceptions from searching nothing.
                 filterResults.count = stock_list.size();
                 filterResults.values = stock_list;

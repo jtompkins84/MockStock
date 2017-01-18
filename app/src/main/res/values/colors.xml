@@ -7,11 +7,12 @@
 
     <color name = "grey">#a19f9f</color>
     <color name = "med_grey">#636363</color>
+    <color name="dark_grey">#212121</color>
     <color name = "offwhite">#bcb7b7</color>
     <color name = "white">#FFFFFF</color>
     <color name="lightgrey">#f7f4f4</color>
     <color name="button">#4fb543</color>
-    <color name="positive">#00DD00</color> <!-- color of text for positive value -->
-    <color name="negative">#DD0000</color> <!-- color of text for negative value -->
+    <color name="positive">#4caf50</color> <!-- color of text for positive value -->
+    <color name="negative">#f44336</color> <!-- color of text for negative value -->
 
 </resources>

@@ -2,53 +2,31 @@ package com.cse4322.mockstock;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.util.DebugUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.orm.SugarContext;
-import com.orm.SugarDb;
-
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
-import yahoofinance.*;
 import yahoofinance.Stock;
 
 
 public class MainActivity extends AppCompatActivity implements StockUpdateAsyncResponse, SearchView.OnQueryTextListener {
-    private ArrayList<UserStock> stocklist;
-    private StockListAdapter stockListAdapter;
-    private ListView stockListView;
+    private PortfolioFragment mPortfolioFragment;
+    private Menu mMainMenu;
     private SearchView searchView;
-    private SearchResultFragment searchResultFragment;
     private TextView portfolioBalance;
     private boolean doListInitial = true;
     private boolean doSearchUpdate = true;
@@ -65,31 +43,18 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.statusbar));
 
-//        SugarContext.init(getApplicationContext());
-
         try {
             UserAccount.createUserAccount(null);
         } catch (UserAccount.UserAlreadyExistsException e) {
             e.printStackTrace();
         }
 
-        portfolioBalance = (TextView) findViewById(R.id.accountbalance);
+        portfolioBalance = (TextView)findViewById(R.id.accountbalance);
+    }
 
-        // custom stock list adapter view.
-        stockListAdapter = new StockListAdapter(MainActivity.this, UserAccount.getCurrUserAccount().getUserStocks(true));
-        stockListView = (ListView) findViewById(R.id.stockListView);
-        stockListView.setAdapter(stockListAdapter);
-
-        stockListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long l) {
-                UserStock item = (UserStock) parent.getItemAtPosition(position);
-                Intent i = new Intent(MainActivity.this, StockDetails.class);
-                i.putExtra("name", item.getCompanyName());
-                i.putExtra("ticker", item.getTicker());
-                startActivity(i);
-            }
-        });
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override
@@ -98,17 +63,17 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         query = query.toUpperCase();
         String[] testStocks = {query};
         if(doSearchUpdate) {
-            new StockUpdateAsyncTask(this).execute(testStocks);
-            doSearchUpdate = false;
+                new StockUpdateAsyncTask(this).execute(testStocks);
+                doSearchUpdate = false;
         }
 
+        getSupportFragmentManager().popBackStackImmediate("search_results", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        searchView.onActionViewCollapsed();
         return false;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        // retrieve the current filter from the current stockListAdapter
-        // stockListAdapter.getFilter().filter(newText);
         return false;
     }
 
@@ -116,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        mMainMenu = menu;
 
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -138,8 +104,6 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         //noinspection SimplifiableIfStatement
         if (id == R.id.reset_account) {
             UserAccount.getCurrUserAccount().resetAccount();
-            stockListAdapter = new StockListAdapter(this, UserAccount.getCurrUserAccount().getUserStocks(true));
-            stockListView.setAdapter(stockListAdapter);
             updatePortfolio();
             return true;
         }
@@ -150,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
     @Override
     public void onStart() {
         super.onStart();
-        if(stockListAdapter != null) stockListAdapter.notifyDataSetChanged();
         updatePortfolio();
     }
 
@@ -159,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         super.onResume();
         refreshTimer = new Timer();
         refreshTimer.schedule(new RefreshStockTask(), 5000);
-        if(stockListAdapter != null) stockListAdapter.notifyDataSetChanged();
+        if(mPortfolioFragment != null && mPortfolioFragment.isVisible()) mPortfolioFragment.notifyDataSetChanged();
         updatePortfolio();
     }
 
@@ -174,7 +137,20 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
     public void stockUpdateProcessFinished(ArrayList<Stock> output) {
         for(Stock stock : output) {
             try {
-                UserStock userStock = UserAccount.getCurrUserAccount().buyStock(stock.getSymbol(), 10, stock.getQuote().getPrice().floatValue());
+                SearchResultFragment searchResultFragment = new SearchResultFragment();
+                Bundle args = new Bundle();
+                ArrayList<CharSequence> tickers = new ArrayList<>();
+                for(Stock s : output) {
+                    tickers.add(s.getSymbol());
+                }
+                args.putCharSequenceArrayList("tickers", tickers);
+                searchResultFragment.setArguments(args);
+
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.stockListView, searchResultFragment);
+                transaction.addToBackStack("search_results");
+                transaction.commit();
+
             } catch (NullPointerException e) {
                 e.printStackTrace();
                 Toast.makeText(getApplicationContext(), "No ticker \'" + stock.getSymbol() + "\' was found.", Toast.LENGTH_LONG).show();
@@ -182,31 +158,12 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
             } finally {
                 doSearchUpdate = true;
             }
-            searchView.setIconified(true);
-            searchView.onActionViewCollapsed();
-            stockListAdapter.refreshStocks();
-            updatePortfolio();
-
-//            SearchResultFragment fr = new SearchResultFragment();
-//            FragmentManager fm = getSupportFragmentManager();
-//            FragmentTransaction fragmentTransaction = fm.beginTransaction();
-//            fragmentTransaction.replace(R.id.search_results, fr);
-//            fragmentTransaction.commit();
-
-//            stockListAdapter.updateCurrUserStockList(); // TODO REMOVE FROM HERE ---->
-//            onResume();
-//            Intent intent = new Intent(this, MainActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//            this.startActivity(intent);
-            // TODO <----- TO HERE
         }
     }
 
     public void updatePortfolio() {
         float bal = UserAccount.getCurrUserAccount().getBalance();
-        String accBal = "$" + String.format("%.2f", bal);
+        String accBal = String.format("$%.2f", bal);
         if(portfolioBalance != null) portfolioBalance.setText(accBal);
         Log.v("Portfolio Balance", "balance = " + accBal);
     }
@@ -215,10 +172,9 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
      * Runs the stock data refresh
      */
     private class RefreshStockTask extends TimerTask {
-
         @Override
         public void run() {
-            if(stockListAdapter != null) stockListAdapter.updateCurrUserStockList();
+            if(mPortfolioFragment != null && mPortfolioFragment.isVisible()) mPortfolioFragment.updatePortfolioStockList();
             refreshTimer.schedule(new RefreshStockTask(), 8000);
         }
     }
