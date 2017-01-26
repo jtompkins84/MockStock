@@ -1,6 +1,5 @@
 package com.cse4322.mockstock;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -15,21 +14,21 @@ import android.widget.ListView;
  */
 
 public class PortfolioFragment extends Fragment {
-    private StockListAdapter mStockListAdapter;
+    private PortfolioListAdapter mPortfolioListAdapter;
     private ListView mStockListView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_portfolio, container, false);
         mStockListView = (ListView) view.findViewById(R.id.portfolio_list);
-        mStockListAdapter = new StockListAdapter(getContext(), UserAccount.getCurrUserAccount().getUserStocks(true));
-        mStockListView.setAdapter(mStockListAdapter);
+        mPortfolioListAdapter = new PortfolioListAdapter(getContext(), UserAccount.getCurrUserAccount().getUserStocks(true));
+        mStockListView.setAdapter(mPortfolioListAdapter);
         mStockListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long l) {
                 StockDetailsFragment stockDetailsFragment = new StockDetailsFragment();
                 Bundle args = new Bundle();
-                args.putCharSequence("ticker", mStockListAdapter.getItem(position).getTicker());
+                args.putCharSequence("ticker", mPortfolioListAdapter.getItem(position).getSymbol());
                 stockDetailsFragment.setArguments(args);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.stockListView, stockDetailsFragment);
@@ -38,15 +37,14 @@ public class PortfolioFragment extends Fragment {
                 transaction.commit();
             }
         });
-
         return view;
     }
 
     public void notifyDataSetChanged() {
-        if(mStockListAdapter != null) mStockListAdapter.notifyDataSetChanged();
+        if(mPortfolioListAdapter != null) mPortfolioListAdapter.notifyDataSetChanged();
     }
 
     public void updatePortfolioStockList() {
-        if(mStockListAdapter != null) mStockListAdapter.updateCurrUserStockList();
+        if(mPortfolioListAdapter != null) mPortfolioListAdapter.updateCurrUserStockList();
     }
 }

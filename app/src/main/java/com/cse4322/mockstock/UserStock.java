@@ -1,8 +1,9 @@
 package com.cse4322.mockstock;
 
+import android.util.Log;
+
 import com.orm.SugarRecord;
 
-import java.util.Collections;
 import java.util.List;
 
 import yahoofinance.Stock;
@@ -20,12 +21,12 @@ public class UserStock extends SugarRecord implements Comparable<UserStock> {
 
     /** company name associated with this stock */
     private String companyName;
-    /** company ticker associated with this stock */
-    private String ticker;
-    /** the exchange or market that this stock's ticker is listed on */
+    /** company symbol associated with this stock */
+    private String symbol;
+    /** the exchange or market that this stock's symbol is listed on */
     private String exchange;
     /** number of stocks owned */
-    private int numberOwned = 0;
+    private int quantityOwned = 0;
     /** the amount in USD the user has invested in this stock */
     private float totalInvestment = 0.0f;
     /** the amount in fees, included as a part of the total investment */
@@ -56,7 +57,7 @@ public class UserStock extends SugarRecord implements Comparable<UserStock> {
     public static List<UserStock> getSortedUserStocks(String userName) {
 //        List<UserStock> userStocks = SugarRecord.find(UserStock.class, "user_name = ?", userName);
 //        Collections.sort(userStocks);
-        List<UserStock> userStocks = UserStock.find(UserStock.class, "user_name = ?", new String[] {userName}, null, "ticker asc", null);
+        List<UserStock> userStocks = UserStock.find(UserStock.class, "user_name = ?", new String[] {userName}, null, "symbol asc", null);
 
         return userStocks;
     }
@@ -67,42 +68,70 @@ public class UserStock extends SugarRecord implements Comparable<UserStock> {
      * @param yStock the <code>yahoofinance.Stock</code> with the updated stock data
      */
     public static void updateUserStock(String userName, Stock yStock) {
-        List<UserStock> userStocks = SugarRecord.find(UserStock.class, "ticker = ? and user_name = ?", yStock.getSymbol(), userName);
+        List<UserStock> userStocks = SugarRecord.find(UserStock.class, "symbol = ? and user_name = ?", yStock.getSymbol(), userName);
 
         if(userStocks != null) userStocks.get(0).updateUserStock(yStock);
     }
 
     /**
-     * If the user has not previously bought stock associated with the ticker, a new UserStock
+     * If the user has not previously bought shares associated with the symbol symbol, a new UserStock
      * will be stored using Sugar ORM of the amount determined by the <code>amount</code> parameter.
      * <div></div>
-     * Otherwise, if the user has already purchased stock under the ticker, the UserStock object
+     * Otherwise, if the user has already purchased shares, the UserStock object
      * will be loaded and updated by adding <code>amount</code> to the currently owned stock.
      * <div></div>
      * @param userName the name of the user this stock is being purchased by
-     * @param ticker the ticker associated with the stock being purchased
+     * @param ticker the symbol associated with the stock being purchased
      * @param amount the amount of stock to buy
      * @param price the price of the stock
      */
     public static UserStock buyStock(String userName, String ticker, int amount, float price) {
         // attempt to find the stock owned by userName
-        UserStock uStock = null;
+        UserStock userStock = null;
         try {
-            uStock = SugarRecord.find(UserStock.class, "ticker = ? and user_name = ?", ticker, userName).get(0);
+            userStock = SugarRecord.find(UserStock.class, "symbol = ? and user_name = ?", ticker, userName).get(0);
 
-            uStock.addStocks(amount);
-            uStock.addTotalInvestment(price * amount);
-            uStock.save();
+            userStock.addStocks(amount);
+            userStock.addTotalInvestment(price * amount);
+            userStock.save();
         }
         // catch the index-out-of-bounds exception that is thrown when the user does not own the referenced stock
         catch (IndexOutOfBoundsException e) {
             new UserStock(userName, ticker, amount, price); // UserStock is created and saved
         }
 
-        return uStock;
+        return userStock;
     }
 
-    // TODO implement sellStock
+    /**
+     * Attempts to search for the requested user-owned stock. When found, the quantity
+     * of shares will be reduced by <code>amount</code> and the <code>totalInvestment</code>
+     * will be reduced by <code>amount * price</code>. The <code>UserStock</code> is then
+     * saved to the database and returned.
+     * <p>If the <code>UserStock</code> is not found to exist in the database,
+     * then <code>null</code> will be returned.</p>
+     * @param userName the name of the user this stock is being purchased by
+     * @param ticker the symbol associated with the stock being purchased
+     * @param amount the amount of stock to buy
+     * @param price the price of the stock
+     * @return
+     */
+    public static UserStock sellStock(String userName, String ticker, int amount, float price) {
+        // attempt to find the stock owned by userName
+        UserStock userStock = null;
+        try {
+            userStock = SugarRecord.find(UserStock.class, "symbol = ? and user_name = ?", ticker, userName).get(0);
+            userStock.addStocks((-1)*amount);
+            userStock.addTotalInvestment((-1)*(amount * price));
+            if(userStock.getQuantityOwned() > 0) userStock.save();
+            else SugarRecord.delete(userStock);
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return userStock;
+    }
 
     /*
             INSTANCE METHODS
@@ -119,22 +148,22 @@ public class UserStock extends SugarRecord implements Comparable<UserStock> {
      * DO NOT USE! This constructor exists for SugarRecord compatibility. Use <code>buyStock</code> instead.
      */
     @Deprecated
-    public UserStock(String userName, String companyName, String ticker, String exchange, int numberOwned, float totalInvestment, float totalFees, float totalValue, float currPrice) {
+    public UserStock(String userName, String companyName, String symbol, String exchange, int quantityOwned, float totalInvestment, float totalFees, float totalValue, float currPrice) {
         this.userName = userName;
         this.companyName = companyName;
-        this.ticker = ticker;
+        this.symbol = symbol;
         this.exchange = exchange;
-        this.numberOwned = numberOwned;
+        this.quantityOwned = quantityOwned;
         this.totalInvestment = totalInvestment;
         this.totalFees = totalFees;
         this.totalValue = totalValue;
         this.currPrice = currPrice;
     }
 
-    private UserStock(String userName, String ticker, int amount, float price) {
+    private UserStock(String userName, String symbol, int amount, float price) {
         this.userName = userName;
-        this.ticker = ticker;
-        this.numberOwned = amount;
+        this.symbol = symbol;
+        this.quantityOwned = amount;
         this.totalInvestment = price * amount;
         this.save();
     }
@@ -143,19 +172,35 @@ public class UserStock extends SugarRecord implements Comparable<UserStock> {
         companyName = yStock.getName();
         exchange = yStock.getStockExchange();
         float price = yStock.getQuote().getPrice().floatValue();
-        totalValue = numberOwned * price;
+        totalValue = quantityOwned * price;
         currPrice = price;
         this.save();
     }
 
-    public void refresh() {
-        List<UserStock> res = UserStock.find(UserStock.class, "user_name = ? and ticker = ?", this.userName, this.ticker);
+    /**
+     * Attempts to refresh this <code>UserStock</code>'s data to match the database.
+     * @return <code>false</code> if no matching <code>UserStock</code> was found in the database, or if
+     * a null value is encountered while attempting to refresh.
+     * Returns <code>true</code> otherwise.
+     */
+    public boolean refresh() {
+        List<UserStock> userStocks = UserStock.find(UserStock.class, "user_name = ? and symbol = ?", this.userName, this.symbol);
 
-        numberOwned = res.get(0).getNumberOwned();
-        totalInvestment = res.get(0).getTotalInvestment();
-        totalFees = res.get(0).getTotalFees();
-        totalValue = res.get(0).getTotalValue();
-        currPrice = res.get(0).getCurrPrice();
+        try {
+            // userStocks should only have one element.
+            quantityOwned = userStocks.get(0).getQuantityOwned();
+            totalInvestment = userStocks.get(0).getTotalInvestment();
+            totalFees = userStocks.get(0).getTotalFees();
+            totalValue = userStocks.get(0).getTotalValue();
+            currPrice = userStocks.get(0).getCurrPrice();
+        } catch (IndexOutOfBoundsException e) {
+            return false;
+        } catch (NullPointerException e) {
+            Log.e(getClass().getSimpleName(), "A null value was encountered while attempting to refresh.");
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -164,11 +209,11 @@ public class UserStock extends SugarRecord implements Comparable<UserStock> {
      * @param amount must be greater than zero
      */
     public void addStocks(int amount) {
-        if(amount > 0) this.numberOwned += amount;
+        this.quantityOwned += amount;
     }
 
     public void addTotalInvestment(float amount) {
-        if(amount > 0) totalInvestment += amount;
+        totalInvestment += amount;
     }
 
     /*
@@ -187,16 +232,16 @@ public class UserStock extends SugarRecord implements Comparable<UserStock> {
         return companyName;
     }
 
-    public String getTicker() {
-        return ticker;
+    public String getSymbol() {
+        return symbol;
     }
 
     public String getExchange() {
         return exchange;
     }
 
-    public int getNumberOwned() {
-        return numberOwned;
+    public int getQuantityOwned() {
+        return quantityOwned;
     }
 
     public float getTotalInvestment() {

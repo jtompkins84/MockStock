@@ -35,7 +35,7 @@ public class UserStockUpdateAsyncTask extends AsyncTask<UserAccount, Void, Array
 
         // retrieving tickers from the UserStocks
         for(int i = 0; i < tickers.length; i++) {
-            tickers[i] = userStocks.get((i)).getTicker();
+            tickers[i] = userStocks.get((i)).getSymbol();
         }
 
         try {
@@ -49,8 +49,8 @@ public class UserStockUpdateAsyncTask extends AsyncTask<UserAccount, Void, Array
 
         // update each user stock & add yahoofinance.Stock object to mStocks ArrayList<Stock>.
         for(UserStock uStock : userStocks) {
-            uStock.updateUserStock(stocks.get(uStock.getTicker()));
-//            mStocks.add(stocks.get(uStock.getTicker())); // TODO Not sure mStocks member is still necessary...
+            uStock.updateUserStock(stocks.get(uStock.getSymbol()));
+//            mStocks.add(stocks.get(uStock.getSymbol())); // TODO Not sure mStocks member is still necessary...
         }
 
         return userStocks; // return resulting list of yahoofinance.Stock objects

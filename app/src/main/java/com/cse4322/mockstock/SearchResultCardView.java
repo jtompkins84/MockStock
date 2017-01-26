@@ -43,7 +43,7 @@ public class SearchResultCardView extends CardView {
         positiveColor = getContext().getResources().getColor(R.color.positive);
         negativeColor = getContext().getResources().getColor(R.color.negative);
 
-        ticker = (TextView) findViewById(R.id.ticker);
+        ticker = (TextView) findViewById(R.id.symbol);
         companyName = (TextView) findViewById(R.id.nameofcompany);
         market = (TextView) findViewById(R.id.markettype);
         gainLoss = (TextView) findViewById(R.id.gain);

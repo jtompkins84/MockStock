@@ -38,7 +38,7 @@ public class PortfolioCardView extends CardView {
 
     public void init(UserStock stock) {
         this.userStock = stock;
-        ticker = (TextView) this.findViewById(R.id.ticker);
+        ticker = (TextView) this.findViewById(R.id.symbol);
         companyName = (TextView) this.findViewById(R.id.nameofcompany);
         companyName.setSelected(true);
 
@@ -51,7 +51,7 @@ public class PortfolioCardView extends CardView {
         negativeColor = getContext().getResources().getColor(R.color.negative);
 
         if(userStock != null) {
-            this.ticker.setText(userStock.getTicker());
+            this.ticker.setText(userStock.getSymbol());
             this.companyName.setText(userStock.getCompanyName());
             this.market.setText(userStock.getExchange());
             updateText(userStock);
@@ -61,10 +61,10 @@ public class PortfolioCardView extends CardView {
     public void updateText(UserStock stock) {
         int GLColor, valueColor;
 
-        userStock.refresh();
+        if(!userStock.refresh())
 
-        if(ticker.getText().toString().compareToIgnoreCase(stock.getTicker()) != 0) {
-            ticker.setText(stock.getTicker());
+        if(ticker.getText().toString().compareToIgnoreCase(stock.getSymbol()) != 0) {
+            ticker.setText(stock.getSymbol());
             companyName.setText(stock.getCompanyName());
             market.setText(stock.getExchange());
         }
@@ -73,9 +73,9 @@ public class PortfolioCardView extends CardView {
         else GLColor = positiveColor;
         gainLoss.setText("$" + String.format("%.2f", Math.abs(stock.getGainLoss())) );
         gainLoss.setTextColor(GLColor);
-//        Log.d(PortfolioCardView.class.getSimpleName(), "updateText: " + stock.getTicker());
+//        Log.d(PortfolioCardView.class.getSimpleName(), "updateText: " + stock.getSymbol());
 
-        quantity.setText(String.format("%d", stock.getNumberOwned()));
+        quantity.setText(String.format("%d", stock.getQuantityOwned()));
 
         curPrice.setText("$" + String.format("%.2f", stock.getCurrPrice()) );
         curPrice.refreshDrawableState();
@@ -87,14 +87,14 @@ public class PortfolioCardView extends CardView {
     }
 
     public void updateText() {
-        List<UserStock> userStocks = UserStock.find(UserStock.class, "ticker = ?", userStock.getTicker());
+        List<UserStock> userStocks = UserStock.find(UserStock.class, "ticker = ?", userStock.getSymbol());
 
         try {
             userStock = userStocks.get(0);
         }
         catch (IndexOutOfBoundsException e) {
             Log.e(PortfolioCardView.class.getSimpleName(),
-                    "UserStock for ticker \'" + userStock.getTicker() + "\' not found in database.");
+                    "UserStock for ticker \'" + userStock.getSymbol() + "\' not found in database.");
             return;
         }
 
@@ -102,6 +102,6 @@ public class PortfolioCardView extends CardView {
     }
 
     public String getTicker() {
-        return userStock.getTicker();
+        return userStock.getSymbol();
     }
 }

@@ -16,6 +16,12 @@ import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.orm.SugarApp;
+import com.orm.SugarContext;
+import com.orm.SugarDb;
+import com.orm.SugarRecord;
+import com.orm.util.SugarConfig;
+
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -28,11 +34,8 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
     private Menu mMainMenu;
     private SearchView searchView;
     private TextView portfolioBalance;
-    private boolean doListInitial = true;
     private boolean doSearchUpdate = true;
     private Timer refreshTimer;
-
-    UserAccount current_user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +46,17 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.statusbar));
 
+        SugarRecord.deleteAll(UserStock.class);
+        SugarRecord.deleteAll(UserAccount.class);
+        SugarContext.init(this);
+
         try {
             UserAccount.createUserAccount(null);
         } catch (UserAccount.UserAlreadyExistsException e) {
             e.printStackTrace();
         }
+
+        mPortfolioFragment = (PortfolioFragment) getSupportFragmentManager().findFragmentById(R.id.stockListView);
 
         portfolioBalance = (TextView)findViewById(R.id.accountbalance);
     }
@@ -104,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         //noinspection SimplifiableIfStatement
         if (id == R.id.reset_account) {
             UserAccount.getCurrUserAccount().resetAccount();
-            updatePortfolio();
+            updateAccountBalance();
             return true;
         }
 
@@ -114,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
     @Override
     public void onStart() {
         super.onStart();
-        updatePortfolio();
+        updateAccountBalance();
     }
 
     @Override
@@ -123,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         refreshTimer = new Timer();
         refreshTimer.schedule(new RefreshStockTask(), 5000);
         if(mPortfolioFragment != null && mPortfolioFragment.isVisible()) mPortfolioFragment.notifyDataSetChanged();
-        updatePortfolio();
+        updateAccountBalance();
     }
 
     @Override
@@ -161,11 +170,14 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         }
     }
 
-    public void updatePortfolio() {
+    public void updateAccountBalance() {
         float bal = UserAccount.getCurrUserAccount().getBalance();
         String accBal = String.format("$%.2f", bal);
         if(portfolioBalance != null) portfolioBalance.setText(accBal);
         Log.v("Portfolio Balance", "balance = " + accBal);
+
+        int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
+        Log.d(this.getClass().getSimpleName(), Integer.toString(backStackCount));
     }
 
     /**
@@ -174,7 +186,8 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
     private class RefreshStockTask extends TimerTask {
         @Override
         public void run() {
-            if(mPortfolioFragment != null && mPortfolioFragment.isVisible()) mPortfolioFragment.updatePortfolioStockList();
+            int fragCount = mPortfolioFragment.getFragmentManager().getBackStackEntryCount();
+            if(mPortfolioFragment != null && fragCount == 0) mPortfolioFragment.updatePortfolioStockList();
             refreshTimer.schedule(new RefreshStockTask(), 8000);
         }
     }

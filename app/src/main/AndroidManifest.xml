@@ -14,7 +14,7 @@
 
         <meta-data
             android:name="DATABASE"
-            android:value="MockStock_sugar_database.db" />
+            android:value="Mock$tock_sugar_database.db" />
 
         <activity
             android:name=".MainActivity"

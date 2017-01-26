@@ -131,6 +131,14 @@ public class UserAccount extends SugarRecord {
         return userStock;
     }
 
+    public UserStock sellStock(String ticker, int amount, float price) {
+        balance += amount * price;
+        UserStock userStock = UserStock.sellStock(userName, ticker, amount, price);
+        save();
+
+        return userStock;
+    }
+
     // TODO implement sellStock
 
     public ArrayList<UserStock> getUserStocks(boolean doSort) {
@@ -153,7 +161,7 @@ public class UserAccount extends SugarRecord {
     }
 
     public UserStock getUserStock(String ticker) {
-        List<UserStock> userStock = SugarRecord.find(UserStock.class, "user_name = ? and ticker = ?", userName, ticker);
+        List<UserStock> userStock = SugarRecord.find(UserStock.class, "user_name = ? and symbol = ?", userName, ticker);
 
         if(userStock.size() == 0) return null;
         return userStock.get(0);

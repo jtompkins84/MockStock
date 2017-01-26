@@ -10,6 +10,7 @@
         android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clickable="true"
         android:background="#CC212121">
 
     </RelativeLayout>
@@ -20,6 +21,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="64dp"
         android:orientation="vertical"
+        android:clickable="true"
         android:background="#ffcbcbcb">
 
 
@@ -82,7 +84,7 @@
                 android:id="@+id/textView" />
 
             <TextView
-                android:id="@+id/quantity"
+                android:id="@+id/capacity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="0"

@@ -2,16 +2,17 @@ package com.cse4322.mockstock;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.orm.SugarRecord;
+import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import yahoofinance.Stock;
 
@@ -19,19 +20,21 @@ import yahoofinance.Stock;
  * Created by Joseph on 1/17/2017.
  */
 
-public class BuyFragment extends Fragment implements StockUpdateAsyncResponse {
-    private Stock mStock;
-    private UserStock mUserStock;
+public class BuyFragment extends Fragment implements StockUpdateAsyncResponse, View.OnClickListener, TextWatcher {
+    private int mBackgroundID;
 
     private int mColorPositive;
     private int mColorNegative;
+    private int mBuyCapacity;
+
+    private Stock mStock;
 
     private TextView mTicker;
     private TextView mCmpyName;
     private TextView mPrice;
-    private TextView mQuantity;
-    private TextView mValue;
-    private EditText mSellQuantity;
+    private TextView mCapacity;
+    private TextView mCost;
+    private EditText mBuyQuantity;
 
     private boolean mIsInitialized = false;
 
@@ -50,9 +53,9 @@ public class BuyFragment extends Fragment implements StockUpdateAsyncResponse {
         mTicker = (TextView) getView().findViewById(R.id.symbol);
         mCmpyName = (TextView) getView().findViewById(R.id.company_name);
         mPrice = (TextView) getView().findViewById(R.id.price);
-        mQuantity = (TextView) getView().findViewById(R.id.quantity);
-        mValue = (TextView) getView().findViewById(R.id.value);
-        mSellQuantity = (EditText) getView().findViewById(R.id.buy_quantity);
+        mCapacity = (TextView) getView().findViewById(R.id.capacity);
+        mCost = (TextView) getView().findViewById(R.id.value);
+        mBuyQuantity = (EditText) getView().findViewById(R.id.buy_quantity);
 
         mColorPositive = getResources().getColor(R.color.positive);
         mColorNegative = getResources().getColor(R.color.negative);
@@ -73,6 +76,17 @@ public class BuyFragment extends Fragment implements StockUpdateAsyncResponse {
             e.printStackTrace();
         }
 
+        mBuyQuantity.addTextChangedListener(this);
+
+        Button buyButton = (Button)getView().findViewById(R.id.buy_button);
+        Button cancelButton = (Button)getView().findViewById(R.id.cancel_button);
+        buyButton.setOnClickListener(this);
+        cancelButton.setOnClickListener(this);
+
+        View background = getView().findViewById(R.id.background);
+        background.setOnClickListener(this);
+        mBackgroundID = background.getId();
+
         mIsInitialized = true;
     }
 
@@ -81,11 +95,61 @@ public class BuyFragment extends Fragment implements StockUpdateAsyncResponse {
         if(output.size() > 0) {
             mStock = output.get(0);
             if(!mIsInitialized) initializeTextViews();
-            UserAccount curUser = UserAccount.getCurrUserAccount();
-            List<UserStock> userStocks = SugarRecord.find(UserStock.class, "user_name = ? and ticker = ?", curUser.getUserName(), mStock.getSymbol());
-            if (userStocks.size() > 0) {
-//                mQuantity.setText(userStocks.get(0).getNumberOwned());
+
+            float currPrice;
+            try {
+                currPrice = mStock.getQuote().getPrice().floatValue();
+                float userBalance = UserAccount.getCurrUserAccount().getBalance();
+                mBuyCapacity = (int)(userBalance / currPrice);
+                mCapacity.setText(Integer.toString(mBuyCapacity));
+            } catch (NullPointerException e) {
+                Toast.makeText(getContext(), "The price is unavailable for this stock.", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == mBackgroundID) getActivity().onBackPressed();
+        else if(view instanceof Button) {
+            Button button = (Button)view;
+            if(button.getText().toString().compareToIgnoreCase("buy") == 0) {
+                int buyQty;
+                if(mBuyQuantity.getText().toString().length() == 0) buyQty = 0;
+                else buyQty = Integer.valueOf(mBuyQuantity.getText().toString());
+
+                if(mBuyCapacity < buyQty) {
+                    Toast.makeText(getContext(), "You do not have enough funds. Max purchase capacity is " + mBuyCapacity + " shares.", Toast.LENGTH_LONG).show();
+                }
+                else if(buyQty == 0) {
+                    getActivity().onBackPressed();
+                }
+                else {
+                    UserAccount.getCurrUserAccount().buyStock(mStock.getSymbol(), buyQty, mStock.getQuote().getPrice().floatValue());
+                    MainActivity activity = (MainActivity) getActivity();
+                    activity.updateAccountBalance();
+                    getActivity().onBackPressed();
+                }
+            }
+            else if(button.getText().toString().compareToIgnoreCase("cancel") == 0) {
+                getActivity().onBackPressed();
+            }
+        }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        int buyQty;
+        if(s.toString().length() == 0) buyQty = 0;
+        else buyQty = Integer.valueOf(s.toString());
+        float currCost = mStock.getQuote().getPrice().floatValue() * buyQty;
+
+        mCost.setText(String.format("$%.2f", currCost));
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {}
 }

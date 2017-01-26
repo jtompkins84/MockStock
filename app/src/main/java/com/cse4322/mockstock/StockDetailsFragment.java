@@ -100,15 +100,22 @@ public class StockDetailsFragment extends Fragment implements StockUpdateAsyncRe
     private void populateStockDetails() {
         int color;
         long tempLong = 0;
-        float tempFloat;
+        float tempFloat = 0;
 
-        tempFloat = mStock.getQuote().getPrice().floatValue();
-        mPrice.setText(String.format("%.2f", tempFloat));
-        tempFloat = mStock.getQuote().getChange().floatValue();
+        try {
+            tempFloat = mStock.getQuote().getPrice().floatValue();
+            mPrice.setText(String.format("%.2f", tempFloat));
+        } catch (NullPointerException e) { e.printStackTrace(); }
+        try {
+            tempFloat = mStock.getQuote().getChange().floatValue();
+            mAmtChg.setText(String.format("%.2f", Math.abs(tempFloat)));
+        } catch (NullPointerException e) { e.printStackTrace(); }
+        try {
+            tempFloat = mStock.getQuote().getChangeInPercent().floatValue();
+            mAmtPctChg.setText(String.format("%.2f", tempFloat) + "%");
+        } catch (NullPointerException e) { e.printStackTrace(); }
 
-        mAmtChg.setText(String.format("%.2f", Math.abs(tempFloat)));
-        tempFloat = mStock.getQuote().getChangeInPercent().floatValue();
-        mAmtPctChg.setText(String.format("%.2f", tempFloat) + "%");
+        // Set color of text affected by positive/negative market movement.
         if(tempFloat >= 0.0f) color = mColorPositive;
         else color = mColorNegative;
         mAmtChg.setTextColor(color);
