@@ -32,8 +32,7 @@ public class PortfolioFragment extends Fragment {
                 stockDetailsFragment.setArguments(args);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.stockListView, stockDetailsFragment);
-                transaction.addToBackStack(null);
-
+                transaction.addToBackStack("stock_detail");
                 transaction.commit();
             }
         });

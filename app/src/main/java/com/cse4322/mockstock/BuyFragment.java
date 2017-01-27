@@ -1,5 +1,6 @@
 package com.cse4322.mockstock;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -7,6 +8,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -110,7 +112,11 @@ public class BuyFragment extends Fragment implements StockUpdateAsyncResponse, V
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == mBackgroundID) getActivity().onBackPressed();
+        if(view.getId() == mBackgroundID) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+            getActivity().onBackPressed();
+        }
         else if(view instanceof Button) {
             Button button = (Button)view;
             if(button.getText().toString().compareToIgnoreCase("buy") == 0) {

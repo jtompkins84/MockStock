@@ -63,7 +63,7 @@ public class StockSearchAsyncTask extends AsyncTask<String, Void, ArrayList<Stri
                     jsonReader.nextName(); // "symbol"
                     String symbol = jsonReader.nextString();
                     Log.d(getClass().getSimpleName(), "search result: symbol = " + symbol);
-                    searchResult.add(symbol);
+                    if(symbol.matches("[a-zA-Z]++")) searchResult.add(symbol);
                     while(jsonReader.hasNext()) jsonReader.skipValue();
                     jsonReader.endObject();
                 }

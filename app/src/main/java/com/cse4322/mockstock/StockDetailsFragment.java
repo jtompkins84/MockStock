@@ -2,7 +2,6 @@ package com.cse4322.mockstock;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +31,7 @@ public class StockDetailsFragment extends Fragment implements StockUpdateAsyncRe
     private TextView mBidPrice;
     private TextView m52WeekHigh;
     private TextView m52WeekLow;
-    private TextView mAnnuaYield;
+    private TextView mAnnualYield;
     private TextView mYearTarget;
     private TextView mVolume;
     private TextView mMarketCap;
@@ -79,7 +78,7 @@ public class StockDetailsFragment extends Fragment implements StockUpdateAsyncRe
         mBidPrice = (TextView) getView().findViewById(R.id.bidpriceamt);
         m52WeekHigh = (TextView) getView().findViewById(R.id.high52weekamt);
         m52WeekLow = (TextView) getView().findViewById(R.id.low52weekamt);
-        mAnnuaYield = (TextView) getView().findViewById(R.id.yearreturnamt);
+        mAnnualYield = (TextView) getView().findViewById(R.id.yearreturnamt);
         mYearTarget = (TextView) getView().findViewById(R.id.year1targetamt);
         mVolume = (TextView) getView().findViewById(R.id.volumeamt);
         mMarketCap = (TextView) getView().findViewById(R.id.marketcapamt);
@@ -147,7 +146,7 @@ public class StockDetailsFragment extends Fragment implements StockUpdateAsyncRe
 
         try {
             tempFloat = mStock.getDividend().getAnnualYield().floatValue();
-            mAnnuaYield.setText(String.format("%.2f", tempFloat));
+            mAnnualYield.setText(String.format("%.2f", tempFloat));
         } catch (NullPointerException e) { e.printStackTrace(); }
 
         try {

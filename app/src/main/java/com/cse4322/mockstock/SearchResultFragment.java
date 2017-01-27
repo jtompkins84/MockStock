@@ -30,16 +30,17 @@ public class SearchResultFragment extends Fragment{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.collapseSearchView();
+
                 StockDetailsFragment stockDetailsFragment = new StockDetailsFragment();
                 Bundle args = new Bundle();
                 args.putCharSequence("ticker", mSearchResultAdapter.getItem(position).getSymbol());
                 stockDetailsFragment.setArguments(args);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.stockListView, stockDetailsFragment);
-                transaction.addToBackStack(null);
-
+                transaction.addToBackStack("stock_detail");
                 transaction.commit();
+
+                mainActivity.collapseSearchView("stock_detail");
             }
         });
 
@@ -50,7 +51,7 @@ public class SearchResultFragment extends Fragment{
         return mSearchResultAdapter;
     }
 
-    public void setmSearchResultAdapter(SearchResultAdapter searchResultAdapter) {
+    public void setSearchResultAdapter(SearchResultAdapter searchResultAdapter) {
         mSearchResultAdapter = searchResultAdapter;
         if(mSearchResultListView != null && mSearchResultListView.getAdapter() == null) {
             mSearchResultListView.setAdapter(mSearchResultAdapter);

@@ -3,7 +3,6 @@ package com.cse4322.mockstock;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -15,10 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.orm.SugarContext;
-import com.orm.SugarRecord;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -27,7 +22,7 @@ import java.util.TimerTask;
 import yahoofinance.Stock;
 
 
-public class MainActivity extends AppCompatActivity implements StockUpdateAsyncResponse, SearchView.OnQueryTextListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, View.OnClickListener {
     private PortfolioFragment mPortfolioFragment;
     private SearchView mSearchView;
     private SearchResultAdapter mSearchResultAdapter;
@@ -42,10 +37,6 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         setSupportActionBar(toolbar);
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.statusbar));
-
-        SugarRecord.deleteAll(UserStock.class);
-        SugarRecord.deleteAll(UserAccount.class);
-        SugarContext.init(this);
 
         try {
             UserAccount.createUserAccount(null);
@@ -68,9 +59,13 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         Log.d(this.getClass().getSimpleName(), Integer.toString(backStackCount));
     }
 
-    public void collapseSearchView() {
-        getSupportFragmentManager().popBackStackImmediate("search_results", 0);
+    public void collapseSearchView(String backstack) {
         mSearchView.onActionViewCollapsed();
+        getSupportFragmentManager().popBackStackImmediate(backstack, 0);
+    }
+
+    public void refreshPortfolioList() {
+        mPortfolioFragment.updatePortfolioStockList();
     }
 
     @Override
@@ -78,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
         // this portion can be used to choose the closest match (which would be position 0 in the list)
         if(mSearchResultAdapter != null) mSearchResultAdapter.submitQuery(query);
 
-        collapseSearchView();
+        collapseSearchView("search_results");
         return false;
     }
 
@@ -146,42 +141,12 @@ public class MainActivity extends AppCompatActivity implements StockUpdateAsyncR
     }
 
     @Override
-    public void stockUpdateProcessFinished(ArrayList<Stock> output) {
-//        for(Stock stock : output) {
-//            try {
-//                SearchResultFragment searchResultFragment = new SearchResultFragment();
-//                Bundle args = new Bundle();
-//                ArrayList<CharSequence> tickers = new ArrayList<>();
-//                for(Stock s : output) {
-//                    tickers.add(s.getSymbol());
-//                }
-//                args.putCharSequenceArrayList("tickers", tickers);
-//                searchResultFragment.setArguments(args);
-//
-//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//                transaction.replace(R.id.stockListView, searchResultFragment);
-//                transaction.addToBackStack("search_results");
-//                transaction.commit();
-//
-//            } catch (NullPointerException e) {
-//                e.printStackTrace();
-//                Toast.makeText(getApplicationContext(), "No ticker \'" + stock.getSymbol() + "\' was found.", Toast.LENGTH_LONG).show();
-//                return;
-//            } finally {
-//                doSearchUpdate = true;
-//            }
-//        }
-    }
-
-
-
-    @Override
     public void onClick(View v) {
         if(v.getId() == mSearchView.getId()) {
 
             SearchResultFragment searchResultFragment = new SearchResultFragment();
             mSearchResultAdapter = new SearchResultAdapter(this);
-            searchResultFragment.setmSearchResultAdapter(mSearchResultAdapter);
+            searchResultFragment.setSearchResultAdapter(mSearchResultAdapter);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.stockListView, searchResultFragment);
             transaction.addToBackStack("search_results");
