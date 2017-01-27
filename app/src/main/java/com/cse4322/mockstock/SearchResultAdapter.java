@@ -16,14 +16,10 @@ import yahoofinance.Stock;
  */
 
 public class SearchResultAdapter extends ArrayAdapter<Stock> implements StockSearchAsyncResponse, StockUpdateAsyncResponse{
+    private boolean mDoAdapterRefresh = false;
 
-    public SearchResultAdapter(Context context, ArrayList<CharSequence> tickerList) {
+    public SearchResultAdapter(Context context) {
         super(context, R.layout.search_result_card, new ArrayList<Stock>());
-
-        String[] tickers = new String[tickerList.size()];
-        for (int i = 0; i < tickers.length; i++) tickers[i] = tickerList.get(i).toString();
-
-        if(tickerList.size() > 0) new StockUpdateAsyncTask(this).execute(tickers);
     }
 
     @Override
@@ -47,13 +43,30 @@ public class SearchResultAdapter extends ArrayAdapter<Stock> implements StockSea
         return searchResultCard;
     }
 
+    /**
+     * Initiates a <code>StockSearchAsyncTask</code> that will then update this adapter with the
+     * results based on the query.
+     * @param query the query to associate with the search request
+     */
+    public void submitQuery(String query) {
+        new StockSearchAsyncTask(this).execute(query);
+    }
+
     @Override
     public void stockUpdateProcessFinished(ArrayList<Stock> output) {
+        clear();
         for(Stock s : output) add(s);
+        notifyDataSetChanged();
     }
 
     @Override
     public void stockSearchProcessFinished(ArrayList<String> output) {
-
+        String[] symbols = new String[output.size()];
+        for(int i = 0; i < symbols.length; i++) {
+            symbols[i] = output.get(i);
+        }
+        mDoAdapterRefresh = true;
+        if(symbols.length > 0) new StockUpdateAsyncTask(this).execute(symbols);
     }
+
 }

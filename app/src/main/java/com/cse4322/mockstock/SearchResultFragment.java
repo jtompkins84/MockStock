@@ -1,5 +1,6 @@
 package com.cse4322.mockstock;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -24,12 +25,12 @@ public class SearchResultFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_search_results, container, false);
         mSearchResultListView = (ListView) view.findViewById(R.id.search_results_list);
 
-        if(getArguments() != null) mSearchResultAdapter = new SearchResultAdapter(getContext(), getArguments().getCharSequenceArrayList("tickers"));
-        else mSearchResultAdapter = new SearchResultAdapter(getContext(), new ArrayList<CharSequence>());
         mSearchResultListView.setAdapter(mSearchResultAdapter);
         mSearchResultListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.collapseSearchView();
                 StockDetailsFragment stockDetailsFragment = new StockDetailsFragment();
                 Bundle args = new Bundle();
                 args.putCharSequence("ticker", mSearchResultAdapter.getItem(position).getSymbol());
@@ -43,5 +44,16 @@ public class SearchResultFragment extends Fragment{
         });
 
         return view;
+    }
+
+    public SearchResultAdapter getSearchResultAdapter() {
+        return mSearchResultAdapter;
+    }
+
+    public void setmSearchResultAdapter(SearchResultAdapter searchResultAdapter) {
+        mSearchResultAdapter = searchResultAdapter;
+        if(mSearchResultListView != null && mSearchResultListView.getAdapter() == null) {
+            mSearchResultListView.setAdapter(mSearchResultAdapter);
+        }
     }
 }
