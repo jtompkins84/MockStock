@@ -15,7 +15,7 @@ import yahoofinance.Stock;
  * Created by Joseph on 12/5/2016.
  */
 
-public class SearchResultAdapter extends ArrayAdapter<Stock> implements StockUpdateAsyncResponse{
+public class SearchResultAdapter extends ArrayAdapter<Stock> implements StockSearchAsyncResponse, StockUpdateAsyncResponse{
 
     public SearchResultAdapter(Context context, ArrayList<CharSequence> tickerList) {
         super(context, R.layout.search_result_card, new ArrayList<Stock>());
@@ -50,5 +50,10 @@ public class SearchResultAdapter extends ArrayAdapter<Stock> implements StockUpd
     @Override
     public void stockUpdateProcessFinished(ArrayList<Stock> output) {
         for(Stock s : output) add(s);
+    }
+
+    @Override
+    public void stockSearchProcessFinished(ArrayList<String> output) {
+
     }
 }
